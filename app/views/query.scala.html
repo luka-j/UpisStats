@@ -1,0 +1,80 @@
+@()
+
+<html>
+    <head>
+        <meta charset="UTF-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Query data</title>
+
+        <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+        <link rel="stylesheet" href="https://code.getmdl.io/1.1.3/material.deep_orange-blue.min.css" />
+        <link rel="stylesheet" href="@routes.Assets.at("stylesheets/main.css")" />
+        <script defer src="https://code.getmdl.io/1.1.3/material.min.js"></script>
+        <script defer src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    </head>
+
+    <body>
+        <div id="content">
+            <div id="query-button-area">
+                <form action="#" id="query-form">
+                    <div class="mdl-textfield mdl-js-textfield" id="query-div">
+                        <textarea class="mdl-textfield__input" type="text" rows= "20" id="query-area" autofocus></textarea>
+                        <label id="query-label" class="mdl-textfield__label" for="query">Upit ide ovde</label>
+                    </div>
+                </form>
+                <span id="errors-text"></span>
+                <span id="results-text"></span>
+                <div id="help-links">
+                    <a id="show-help" onclick="toggleHelp()" href="#">Pomoć</a>
+                    <a id="roll-example" onclick="randomExample()" href="#">Isprobaj još primera</a>
+                </div>
+                <p id="help-text">
+                    Prvi red se odnosi na podatke koji se prikazuju na grafikonu, odnosno šta je na kojoj osi.<br>
+                    Naredni redovi su skup komandi. Mogući tipovi komandi su: crtaj [boja], max, min, prosek, broj<br>
+                    Nakon toga, određujete šta će se crtati, odnosno da li vas zanimaju učenici, osnovne škole ili smerovi <br>
+                    Ostatak komande se odnosi na uslove, tj. koji učenici/škole/smerovi se crtaju <br>
+                    Mogući parametri za crtanje i uslove. U slučaju škola, odnosno smerova, parametri predstavljaju prosek koji su učenici u toj školi imali (odnosno koji je prosek za dati parametar u budućoj generaciji tog smera): <br>
+                    <br>
+                    brojZelja, krug, sifra - redom, broj iskazanih želja, krug u kom je učenik upisan i njegova šifra za upis <br>
+                    bodovi.zavrsni, bodovi.skola, bodovi.prijemni - bodovi za upis koji je dati učenik osvojio (prijemni se odnosi na prijemne ispite u specijalnim školama) <br>
+                    bodovi.matematika, bodovi.srpski, bodovi.kombinovani - broj bodova za svaki od tri završna ispita <br>
+                    bodovi.takmicenja - broj bodova koje je učenik osvojio na nekom od državnih ili međunarodnih takmičenja <br>
+                    6r.prosek, 7r.prosek, 8r.prosek, prosek.ukupno - prosek ocena u datom razredu ili u sva tri <br>
+                    6r.[predmet], 7r.[predmet], 8r.[predmet], prosek.[predmet] - ocena iz datog predmeta u određenom razredu, odnosno prosek u sve tri godine <br>
+                    Mogući predmeti su: srpski, matematika, fizika, hemija (za 7r i 8r), engleski, drugiStrani, geografija, biologija, istorija, likovno, tehnicko, muzicko, fizicko, sport, vladanje <br>
+                    Pri postavljanju uslova koji se odnose na osnovne škole i smerove, mogu se koristiti i ime, mesto i okrug (sa ili bez prefiksa "skola."). Imena nisu osetljiva na veliko i malo slovo, pismo i kvačice. <br>
+                    Takođe, za smerove se mogu koristiti i smer (ime smera), podrucje (za područje rada) i kvota (sa ili bez prefiksa "smer.") <br>
+                    <br>
+                    Opšti oblik upita je (stvari pod {} su obavezne, dok su one unutar [] opcione): <br>
+                    x:{parametar} [,y:{parametar} [,z:{parametar}]]<br>
+                    {tip naredbe}: {ucenik/osnovna/smer} [gde] [{izraz} {i/ili} ... [pohadjao {izraz} {i/ili} ... , [upisao {izraz} {i/ili} ... ]]] <br>
+                    ... <br>
+                    (pohadjao i upisao su validni samo ako se traže učenici)
+                    gde se pod {izraz} podrazumeva izraz oblika {parametar}{=/!=/&lt;/&lt;=/&gt;/&gt;=}{parametar}, <br>
+                    dok {parametar} može biti jedan od gorepomenutih, kao i konkretna vrednost ili više parametara povezanih nekom matematičkom operacijom <br>
+                    Kako biste zaokružili parametar do najbližeg celog broja, koristite prefiks "ceobroj." ili "int.", ili na nekoliko decimala <br>
+                    koristeći prefiks "zaokruzi#n.", gde je n broj decimala.
+                </p>
+                <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect"
+                id="button-submit-query" onclick="doQuery()">
+                    Prikaži
+                </button>
+                <div class="mdl-spinner mdl-js-spinner is-active" id="query-spinner"></div>
+            </div>
+
+            <div id="plot" ></div>
+
+
+            <br><br><br><br>
+            <form action="#">
+                <div class="mdl-textfield mdl-js-textfield" id="result-div">
+                    <textarea class="mdl-textfield__input" type="text" rows= "15" id="result-area" ></textarea>
+                    <label class="mdl-textfield__label" for="query" id="result-label">Result goes here</label>
+                </div>
+            </form>
+        </div>
+
+
+        <script type="application/javascript" src="@routes.Assets.at("javascripts/main.js")"></script>
+    </body>
+</html>

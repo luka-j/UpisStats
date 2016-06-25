@@ -1,0 +1,74 @@
+#content {
+    margin: 0 auto;
+    width: 1400px;
+}
+
+#query-div {
+    width: 700px;
+}
+
+#query-button-area {
+    width: 700px;
+    height: 600px;
+    display: inline-block;
+}
+
+#query-area {
+    width: 700px;
+    display: inline-block;
+}
+
+#plot {
+    width: 600px;
+    height: 600px;
+    display: inline-block;
+    position: absolute;
+}
+
+#button-submit-query {
+    margin-left: 2em;
+    display: block;
+    z-index: 1;
+}
+
+#query-spinner {
+    margin-top: -3em;
+    margin-left: 3.3em;
+    width: 40px;
+    height: 40px;
+    display: none;
+}
+
+#errors-text, #results-text {
+    font-size: large;
+    display: inline-block;
+    margin-bottom: 1.5em;
+}
+
+#help-links {
+    margin-bottom: 1.5em;
+    margin-top: -1em;
+    font-size: 16px;
+    display: inline-block;
+}
+
+#show-help {
+    margin-right: 5em;
+}
+
+#help-text {
+    overflow: visible;
+    white-space: nowrap;
+    font-size: medium;
+    display: none;
+    margin-bottom: 1em;
+    color: #444444
+}
+
+#errors-text {
+    color: crimson;
+}
+
+#results-text {
+    color: green;
+}
