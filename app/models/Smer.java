@@ -2,23 +2,20 @@ package models;
 
 import com.avaje.ebean.Model;
 import controllers.CharUtils;
-import controllers.Index;
 
 import javax.persistence.Column;
-import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.persistence.Table;
-import java.util.List;
+import javax.persistence.MappedSuperclass;
 
 /**
  * Created by luka on 5.5.16..
  */
-@Entity
-@Table(name = "smerovi")
+@MappedSuperclass
 public class Smer extends Model {
-    public int godina;
     @Id
     public long id;
+
+    public int brojUcenika;
 
     @Column(unique = true)
     public String sifra;
@@ -33,25 +30,16 @@ public class Smer extends Model {
     public double matematika, srpski, kombinovani;
     public double bodoviIzSkole, bodoviSaZavrsnog, bodoviUkupno, bodoviSaPrijemnog;
 
-    public static Finder<Long, Smer> finder = new Model.Finder<>(Smer.class);
-
-
-    public static Smer create(String sifra, String ime, String mesto, String okrug, String smer, String podrucje, int kvota) {
-        sifra = CharUtils.stripAll(sifra);
-        List<Smer> res = finder.where().eq("sifra", sifra).findList();
-        if (res.size() == 0) {
-            Smer s = new Smer();
-            s.godina = Index.CURRENT_YEAR;
-            s.sifra = sifra;
-            s.ime = CharUtils.stripAll(ime);
-            s.mesto = CharUtils.stripAll(mesto);
-            s.okrug = CharUtils.stripAll(okrug);
-            s.smer = CharUtils.stripAll(smer);
-            s.podrucje = CharUtils.stripAll(podrucje);
-            s.kvota = kvota;
-            s.save();
-            return s;
-        }
-        return res.get(0);
+    protected static Smer create(Smer s, String sifra, String ime, String mesto, String okrug, String smer, String podrucje, int kvota) {
+        s.sifra = sifra;
+        s.brojUcenika = 1;
+        s.ime = CharUtils.stripAll(ime);
+        s.mesto = CharUtils.stripAll(mesto);
+        s.okrug = CharUtils.stripAll(okrug);
+        s.smer = CharUtils.stripAll(smer);
+        s.podrucje = CharUtils.stripAll(podrucje);
+        s.kvota = kvota;
+        s.save();
+        return s;
     }
 }

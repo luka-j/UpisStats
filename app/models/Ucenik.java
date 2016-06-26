@@ -5,29 +5,22 @@ import controllers.CharUtils;
 import controllers.Index;
 import upismpn.obrada.UcenikWrapper;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Id;
+import javax.persistence.MappedSuperclass;
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 /**
  * Created by luka on 5.5.16..
  */
-@Entity
-@Table(name = "ucenici")
+@MappedSuperclass
 public class Ucenik extends Model {
     @Id
     public long id;
 
-    public int godina;
-
     @Column(unique = true)
     public int sifra;
-    @ManyToOne(cascade = CascadeType.ALL)
-    public models.OsnovnaSkola osnovna;
-    @ManyToOne(cascade = CascadeType.ALL)
-    public Smer upisana;
 
     public String drugiStraniJezik;
     public int likovno6, tehnicko6, geografija6, biologija6, sport6, drugiStrani6, matematika6, istorija6, engleski6, muzicko6, fizicko6, vladanje6, fizika6, srpski6;
@@ -35,20 +28,12 @@ public class Ucenik extends Model {
     public int likovno8, tehnicko8, geografija8, biologija8, sport8, drugiStrani8, matematika8, istorija8, engleski8, muzicko8, fizicko8, vladanje8, fizika8, srpski8, hemija8;
     public double likovnoP, tehnickoP, geografijaP, biologijaP, sportP, drugiStraniP, matematikaP, istorijaP, engleskiP, muzickoP, fizickoP, vladanjeP, fizikaP, srpskiP, hemijaP;
 
-    @OneToMany(mappedBy = "ucenik")
-    public List<Takmicenje> takmicenja = new ArrayList<>();
-
-    @OneToMany(mappedBy = "ucenik")
-    public List<Zelja> listaZelja = new ArrayList<>();
-
     public double prosekSesti, prosekSedmi, prosekOsmi, prosekUkupno;
     public double matematika, srpski, kombinovani;
     public double bodoviIzSkole, bodoviSaZavrsnog, bodoviUkupno, bodoviSaPrijemnog, bodoviSaTakmicenja;
     public int brojZelja, upisanaZelja, krug;
 
-    public static Ucenik create(UcenikWrapper from) {
-        Ucenik uc = new Ucenik();
-        uc.godina = Index.CURRENT_YEAR;
+    protected static Ucenik create(Ucenik uc, UcenikWrapper from) {
         uc.sifra = from.id;
         uc.prosekSesti = from.prosekSesti;
         uc.prosekSedmi = from.prosekSedmi;
@@ -86,32 +71,9 @@ public class Ucenik extends Model {
             Index.errors(uc.sifra);
             return null;
         }
-
-        UcenikWrapper.SrednjaSkola ss = from.upisanaSkola;
-        uc.upisana = Smer.create(ss.sifra, ss.ime, ss.mesto, ss.okrug, ss.smer, ss.podrucje, ss.kvota);
-        UcenikWrapper.OsnovnaSkola os = from.osInfo;
-        uc.osnovna = OsnovnaSkola.create(os.ime, os.mesto, os.okrug);
-        uc.save();
-        for (Map.Entry<UcenikWrapper.Takmicenje, Integer> tak : from.takmicenja.entrySet()) {
-            uc.takmicenja.add(Takmicenje.create(uc, tak.getKey().predmet, tak.getValue(), tak.getKey().mesto, tak.getKey().rang));
-        }
-        /*for(UcenikWrapper.SrednjaSkola z : from.listaZelja) {
-            uc.listaZelja.add(Zelja.create(uc, z.sifra));
-        }*/
         return uc;
     }
 
-    public static void populateZelje(UcenikWrapper from) {
-        Ucenik uc = finder.where().eq("sifra", from.id).findUnique();
-        if (uc == null) {
-            System.err.println("Non-existant uc" + from.id);
-            return;
-        }
-        for (UcenikWrapper.SrednjaSkola z : from.listaZelja) {
-            uc.listaZelja.add(Zelja.create(uc, z.sifra));
-        }
-        uc.update();
-    }
 
     public static void populateAverages(Ucenik of) throws NoSuchFieldException, IllegalAccessException {
         for (Field f : Ucenik.class.getDeclaredFields()) {
@@ -189,14 +151,4 @@ public class Ucenik extends Model {
         }
     }
 
-    public String toString() {
-        StringBuilder str = new StringBuilder();
-        str.append("Godina upisa: ").append(godina).append(", sifra: ").append(sifra).append("\n")
-                .append("osnovna: ").append(osnovna.ime).append(" (").append(osnovna.mesto)
-                .append("), upisana: ").append(upisana.ime).append(" (").append(upisana.mesto).append(")\n")
-                .append("Upisan u ").append(krug).append(" krugu\n");
-        return str.toString();
-    }
-
-    public static Finder<Long, Ucenik> finder = new Model.Finder<>(Ucenik.class);
 }

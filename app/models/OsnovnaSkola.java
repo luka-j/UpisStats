@@ -1,24 +1,19 @@
 package models;
 
 import com.avaje.ebean.Model;
-import controllers.CharUtils;
-import controllers.Index;
 
-import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.persistence.Table;
-import java.util.List;
+import javax.persistence.MappedSuperclass;
 
 /**
  * Created by luka on 5.5.16..
  */
-@Entity
-@Table(name = "os")
+@MappedSuperclass
 public class OsnovnaSkola extends Model {
-    public int godina;
-
     @Id
     public long id;
+
+    public int brojUcenika;
 
     public String ime;
     public String mesto;
@@ -32,19 +27,12 @@ public class OsnovnaSkola extends Model {
     public double matematika, srpski, kombinovani;
     public double bodoviIzSkole, bodoviSaZavrsnog, bodoviUkupno, bodoviSaPrijemnog;
 
-    public static Finder<Long, OsnovnaSkola> finder = new Model.Finder<>(OsnovnaSkola.class);
-
-    public static OsnovnaSkola create(String ime, String mesto, String okrug) {
-        List<OsnovnaSkola> res = finder.where().eq("ime", ime).eq("mesto", mesto).eq("okrug", okrug).findList();
-        if (res.size() == 0) {
-            OsnovnaSkola os = new OsnovnaSkola();
-            os.godina = Index.CURRENT_YEAR;
-            os.ime = CharUtils.stripAll(ime);
-            os.mesto = CharUtils.stripAll(mesto);
-            os.okrug = CharUtils.stripAll(okrug);
-            os.save();
-            return os;
-        }
-        return res.get(0);
+    protected static OsnovnaSkola create(OsnovnaSkola os, String ime, String mesto, String okrug) {
+        os.ime = ime;
+        os.mesto = mesto;
+        os.okrug = okrug;
+        os.brojUcenika = 1;
+        os.save();
+        return os;
     }
 }

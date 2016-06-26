@@ -11,13 +11,20 @@ import java.util.List;
 public class Parser {
 
 
+    private static final int CURRENT_YEAR = 2015;
     private final String rawInput;
-
     private String[] wantedProps = new String[3];
     private int propCount;
+    private int selectedYear;
 
     public Parser(String input) {
         rawInput = input;
+    }
+
+    private static <T> void swap(T[] arr, int a, int b) {
+        T temp = arr[a];
+        arr[a] = arr[b];
+        arr[b] = temp;
     }
 
     public List<Action> parse() throws ParseException {
@@ -283,9 +290,15 @@ public class Parser {
             String literal = prop.substring(1, prop.length() - 1);
             literal = CharUtils.stripAll(literal);
             return "'" + literal + "'";
-        } else if (prop.equals("brojZelja") || prop.equals("krug") || prop.equals("sifra")) result = prop;
+        } else if (prop.equals("krug") || prop.equals("sifra")) result = prop;
         else {
             switch (prop) {
+                case "zelje.broj":
+                    result = "broj_zelja";
+                    break;
+                case "zelje.upisana":
+                    result = "upisana_zelja";
+                    break;
                 case "bodovi.zavrsni":
                 case "bodovi.zavrsni.ukupno":
                     result = "bodovi_sa_zavrsnog";
@@ -353,6 +366,12 @@ public class Parser {
                 case "skola.kvota":
                 case "smer.kvota":
                     result = "kvota";
+                    break;
+                case "skola.ucenika":
+                case "ucenika":
+                case "ucenici.broj":
+                case "skola.ucenici.broj":
+                    result = "broj_ucenika";
                     break;
             }
 
@@ -450,9 +469,9 @@ public class Parser {
     private String chooseSubquery(String token) throws ParseException {
         switch (token) {
             case "upisao":
-                return "AND upisana_id IN (SELECT id FROM smerovi ";
+                return " upisana_id IN (SELECT id FROM smerovi" + selectedYear + " ";
             case "pohadjao":
-                return "AND osnovna_id IN (SELECT id FROM os ";
+                return " osnovna_id IN (SELECT id FROM os" + selectedYear + " ";
             case "zeleo":
                 throw new ParseException("zelje jos nisu podrzane"); //todo
             default:
@@ -493,31 +512,48 @@ public class Parser {
                 break;
         }
         q.append(parseExpression(tokens.subList(i, j)));
-        q.append(") ");
         i = j;
         return i;
+    }
+
+    private String chooseTable(String token) throws ParseException {
+        String tbl;
+        if (!token.contains(".")) {
+            selectedYear = CURRENT_YEAR;
+            tbl = token;
+        } else {
+            String[] parts = token.split("\\.");
+            if (parts.length != 2) throw new ParseException(token);
+            selectedYear = Integer.parseInt(parts[0]);
+            tbl = parts[1];
+        }
+
+        switch (tbl) {
+            case "ucenik":
+            case "ucenici":
+                return ("ucenici" + selectedYear + " ");
+            case "smer":
+            case "smerovi":
+                return ("smerovi" + selectedYear + " ");
+            case "osnovne":
+            case "osnovna":
+                return ("os" + selectedYear + " ");
+            default:
+                throw new ParseException(token);
+        }
+    }
+
+    private void conjuctSubqueries(StringBuilder q, boolean end) {
+        if (Utils.endsWith(q, "OR ")) q.append(") OR");
+        else if (!end) q.append(") AND");
+        else q.append(")");
     }
 
     private String parseQuery(String query) throws ParseException {
         StringBuilder q = new StringBuilder("FROM ");
         List<String> tokens = tokenize(query);
         int i = 0;
-        switch (tokens.get(i)) {
-            case "ucenik":
-            case "ucenici":
-                q.append("ucenici ");
-                break;
-            case "smer":
-            case "smerovi":
-                q.append("smerovi ");
-                break;
-            case "osnovne":
-            case "osnovna":
-                q.append("os ");
-                break;
-            default:
-                throw new ParseException(tokens.get(i));
-        }
+        q.append(chooseTable(tokens.get(i)));
         i++;
 
         if (i >= tokens.size()) return q.toString();
@@ -525,15 +561,17 @@ public class Parser {
         if (!(tokens.get(i).equals("upisao") || tokens.get(i).equals("pohadjao") || tokens.get(i).equals("zeleo"))) {
             q.append("WHERE ("); //i++;
             i = parseSubquery(q, tokens, i);
+            conjuctSubqueries(q, i == tokens.size());
             if (i == tokens.size()) return q.toString();
         } else {
-            q.append("WHERE true ");
+            q.append("WHERE ");
         }
 
         if (tokens.get(i).equals("gde")) i++;
         q.append(chooseSubquery(tokens.get(i))).append("WHERE ");
         i++;
         i = parseSubquery(q, tokens, i);
+        conjuctSubqueries(q, i == tokens.size());
         if (i == tokens.size()) return q.toString();
 
         if (tokens.get(i).endsWith(",")) i++;
@@ -541,6 +579,7 @@ public class Parser {
         q.append(chooseSubquery(tokens.get(i))).append("WHERE ");
         i++;
         i = parseSubquery(q, tokens, i);
+        conjuctSubqueries(q, i == tokens.size());
         if (i == tokens.size()) return q.toString();
 
         if (tokens.get(i).endsWith(",")) i++;
@@ -580,12 +619,6 @@ public class Parser {
         return tokens;
     }
 
-    private static <T> void swap(T[] arr, int a, int b) {
-        T temp = arr[a];
-        arr[a] = arr[b];
-        arr[b] = temp;
-    }
-
     public class Action {
         public static final int PLOT = 0;
         public static final int AVG = 1;
@@ -602,10 +635,6 @@ public class Parser {
         private int axesCount;
         private String[] axesNames;
 
-        public void setException(ParseException ex) {
-            possibleException = ex;
-        }
-
         public Action(int action, Color color, String query, int axesCount) {
             this.action = action;
             this.color = color;
@@ -614,6 +643,10 @@ public class Parser {
         }
 
         public Action() {
+        }
+
+        public void setException(ParseException ex) {
+            possibleException = ex;
         }
 
         private Action append(String s) {

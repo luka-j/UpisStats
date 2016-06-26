@@ -124,7 +124,7 @@ function displayContents() {
             resArea.value += httpRequest.responseText;
             document.getElementById("result-label").value = "";
         } else {
-            alert('There was a problem with the request.');
+            alert('Došlo je do greške pri obavljanju zahteva\n' + httpRequest.status + ": " + httpRequest.responseText);
         }
     }
 
