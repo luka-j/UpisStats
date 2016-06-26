@@ -34,7 +34,7 @@ public class Parser {
         String[] content = rawInput.replace("\"", "'").split(";|\\n");
         //replace jer stringovi u SQLu idu pod single quotes (shvaćeno sredinom juna)
         if (content.length < 2) throw new ParseException("Nema upita");
-        if (content.length > 10) throw new ParseException("Previše upita (trenutni maksimum je deset)");
+        if (content.length > 12) throw new ParseException("Previše upita (trenutni maksimum je dvanaest)");
 
         String[] axis = content[0].split("\\s*,\\s*");
         if (axis.length > 3) throw new ParseException("Previše osa");
@@ -214,7 +214,6 @@ public class Parser {
             a.setException(e);
         }
         a.buildQuery();
-        System.out.println("query: " + a.query);
         return a;
     }
 

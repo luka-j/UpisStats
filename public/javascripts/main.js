@@ -6,11 +6,12 @@ window.onload = function () {
 };
 
 function presetQuery(queryArea) {
-    queryArea.value = "x:zaokruzi#1.prosek.srpski, y:zaokruzi#1.prosek.matematika\n" +
-        "crtaj zuto: osnovna prosek.ukupno<3.5 ili bodovi.zavrsni<20\n" +
-        "crtaj crveno: ucenik upisao skola.okrug='gradbeograd'\n" +
-        "crtaj plavo: ucenik pohadjao skola.ime='matematicka gimnazija-ogled'\n" +
-        "crtaj zeleno: smer kvota>=50\n";
+    queryArea.value = "x:zaokruzi#1.prosek.srpski, y:zaokruzi#1.prosek.matematika\n"+
+    "crtaj zuto: osnovna prosek.ukupno<3.5 ili bodovi.zavrsni<20\n"+
+    "crtaj #ee99ee: smer kvota<60\n"+
+    "crtaj crveno: ucenik upisao skola.okrug='gradbeograd'\n"+
+    "crtaj plavo: ucenik pohadjao skola.ime='matematicka gimnazija-ogled'\n"+
+    "crtaj zeleno: smer kvota>=60";
     doQuery();
     queryArea.focus();
 }
