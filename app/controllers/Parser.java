@@ -33,10 +33,15 @@ public class Parser {
 
         String[] content = rawInput.replace("\"", "'").split(";|\\n");
         //replace jer stringovi u SQLu idu pod single quotes (shvaćeno sredinom juna)
-        if (content.length < 2) throw new ParseException("Nema upita");
-        if (content.length > 12) throw new ParseException("Previše upita (trenutni maksimum je dvanaest)");
 
-        String[] axis = content[0].split("\\s*,\\s*");
+        int firstLine = 0;
+        while ((content[firstLine].startsWith("//") || content[firstLine].isEmpty()) && firstLine < content.length)
+            firstLine++;
+
+        if (content.length - firstLine < 2) throw new ParseException("Nema upita");
+        if (content.length - firstLine > 13) throw new ParseException("Previše upita (trenutni maksimum je dvanaest)");
+
+        String[] axis = content[firstLine].split("\\s*,\\s*");
         if (axis.length > 3) throw new ParseException("Previše osa");
 
         for (int i = 0; i < axis.length; i++)
@@ -69,7 +74,7 @@ public class Parser {
         propCount = Math.max(2, axis.length);
 
 
-        for (int i = 1; i < content.length; i++) {
+        for (int i = firstLine + 1; i < content.length; i++) {
             Action ac = parseLine(content[i]);
             if (ac != null) {
                 ret.add(ac);
@@ -359,6 +364,7 @@ public class Parser {
                     break;
                 case "smer":
                 case "skola.smer":
+                case "smer.ime":
                     result = "smer";
                     break;
                 case "kvota":

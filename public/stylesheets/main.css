@@ -32,10 +32,9 @@
 }
 
 #query-spinner {
-    margin-top: -3em;
     margin-left: 3.3em;
-    width: 40px;
-    height: 40px;
+    width: 35px;
+    height: 35px;
     display: none;
 }
 
@@ -45,15 +44,27 @@
     margin-bottom: 1.5em;
 }
 
+a {
+    font-size: 16px;
+}
+
 #help-links {
     margin-bottom: 1.5em;
     margin-top: -1em;
-    font-size: 16px;
     display: inline-block;
+}
+
+#bottom-div {
+    margin-top: 3em;
+    display: block;
 }
 
 #show-help {
     margin-right: 5em;
+}
+
+#all-examples {
+    margin-left: 4em;
 }
 
 #help-text {

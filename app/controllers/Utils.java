@@ -39,4 +39,8 @@ public class Utils {
     public static boolean endsWith(StringBuilder what, String with) {
         return what.substring(what.length() - with.length(), what.length()).equals(with);
     }
+
+    public static int randomInt(int min, int max) {
+        return (int) Math.floor(Math.random() * (max - min) + min);
+    }
 }
