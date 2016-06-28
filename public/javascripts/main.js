@@ -2,7 +2,7 @@ var httpRequest;
 
 window.onload = function () {
     var query = document.getElementById("query-area");
-    initialExample();
+    if (query.value == "") initialExample(); //todo move caret to end after this
 };
 
 function doQuery() {
@@ -46,11 +46,11 @@ function displayContents(httpRequest, response) {
             var data = [];
             for (var i = 0; i < response.length; i++) {
                 if (response[i].error) {
-                    errorsDisplay.innerHTML += "Upit " + (i + 1) + ", greška: " + response[i].error + "<br>";
+                    errorsDisplay.innerHTML += "Upit " + (i + 1) + ", greška: " + response[i].error + "<br />";
                 } else if (response[i].data[0].length == 0) {
-                    resultsDisplay.innerHTML += "Upit " + (i + 1) + ": nema rezultata<br>";
+                    resultsDisplay.innerHTML += "Upit " + (i + 1) + ": nema rezultata<br />";
                 } else {
-                    if (response[i].type == 0) {
+                    if (response[i].type == 0) { //plot
                         var counts = [];
                         var sizes = [];
                         for (var j = 0; j < response[i].data[0].length; j++) {
@@ -75,15 +75,17 @@ function displayContents(httpRequest, response) {
                         }
                         data.push(res);
                     } else {
-                        resultsDisplay.innerHTML += "Upit " + (i + 1) + ", rezultat:";
-                        if (response[i].type != 5) {
+                        resultsDisplay.innerHTML += "Upit " + (i + 1) + ", rezultat: ";
+                        if (response[i].type == 2 || response[i].type == 3) { //min & max
                             for (var k = 0; k < response[i].data[0].length; k++) {
                                 resultsDisplay.innerHTML += " " + response[i].data[0][k] + "x" + response[i].data[1][k];
                             }
-                        } else {
+                        } else if (response[i].type == 1 || response[i].type == 4) { //avg & count
+                            resultsDisplay.innerHTML += response[i].data[1];
+                        } else { //dump (& sve ostalo)
                             resultsDisplay.innerHTML += response[i].data;
                         }
-                        resultsDisplay.innerHTML += "\n";
+                        resultsDisplay.innerHTML += "<br />";
                     }
                 }
             }

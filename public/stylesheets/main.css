@@ -9,7 +9,7 @@
 
 #query-button-area {
     width: 700px;
-    height: 600px;
+    height: 660px;
     display: inline-block;
 }
 
@@ -70,10 +70,10 @@ a {
 #help-text {
     overflow: visible;
     white-space: nowrap;
-    font-size: medium;
+    font-size: 14px;
     display: none;
     margin-bottom: 1em;
-    color: #444444
+    color: #555555
 }
 
 #errors-text {

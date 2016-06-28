@@ -7,7 +7,7 @@ GET        /                         controllers.Index.hw
 GET        /populate                 controllers.Index.populateDb
 GET        /avgs                     controllers.Index.populateSchoolAverages
 GET        /get                      controllers.Index.getData(q: String)
-GET        /query                    controllers.Index.query
+GET        /query                    controllers.Index.query(initial: String?="")
 GET        /examples/random          controllers.Examples.randomExample
 GET        /examples/all             controllers.Examples.allExamples
 GET        /examples/all/show        controllers.Examples.displayAllExamples

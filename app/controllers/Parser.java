@@ -137,7 +137,6 @@ public class Parser {
                     return a;
                 }
                 a.append("SELECT AVG(").append(firstProp()).append(") ");
-                a.append(") ");
                 break;
             case "minimum":
             case "min":

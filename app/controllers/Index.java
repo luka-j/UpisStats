@@ -30,10 +30,12 @@ import java.util.Map;
  */
 public class Index extends Controller {
     private static final boolean INIT_PHASE = false;
+    private static final boolean DEBUG = true;
+
+    static Index instance; //well, shit
     //(need this for proper db injection)
     //todo fix mess
-    private static final boolean DEBUG = true;
-    static Index instance; //well, shit
+
     private static String errors = "";
 
     @Inject
@@ -173,8 +175,6 @@ public class Index extends Controller {
                             int max = results.maxCount();
                             double factor = (4.2 / max) * Utils.log(1.5, max);
                             if (max == 1) factor = 4;
-                            //alt formulas: (80/max)*log(100_000, size)
-                            //              (1/max)*log(1.15, size)
                             for (Map.Entry<CountMatrix.Datum, Integer> e : results.entrySet()) {
                                 String[] vals = e.getKey().getArray();
                                 for (int i = 0; i < vals.length; i++) {
@@ -230,10 +230,10 @@ public class Index extends Controller {
         //return ok("Hello world");
     }
 
-    public Result query() {
+    public Result query(String initialQuery) {
         if (instance == null) instance = this;
         if (INIT_PHASE) return new Result(503, HttpEntity.fromString("Ažuriranje podataka je u toku...\n" +
                 "Probajte ponovo za par minuta", "UTF-8"));
-        return ok(views.html.query.render());
+        return ok(views.html.query.render(initialQuery));
     }
 }
