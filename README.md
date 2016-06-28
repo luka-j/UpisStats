@@ -50,8 +50,13 @@ Metode, redom:
   
 ###Podaci
 Podaci su preuzeti sa sajta za upis MPN prošle godine koristeći [scrapper](https://github.com/luq-0/Upis15Crawler), i biti će preuzeti ponovo kad bude objavljen raspored po školama, za ovu godinu. Unutar ovog projekta se nalazi manja verzija istog scrappera (bez nekih delova za output), u pakovanju `upismpn`.
+
 Izlaz tog scrappera je transformisan u bazu (v. controllers.Index#populateDb), čiji se dump može naći unutar ovog projekta, u fajlu upisdb[mmddyy].tar. U pitanju je PostgreSQL baza koja se može učitati koristeći `pg_restore` kada mu prosledite taj fajl. Nazivi kolona i njihovo objašnjenje su dati u prethodnom odeljku (između prve i druge, odnosno posle druge, crtice).
+
 Svaka tabela ima svoju klasu. Svaka godina ima svoju tabelu. Klase bez godina su obeležene kao `@MappedSupperclass` i u njima se nalaze sva primitivna polja koja nasleđuju `@Entity`-ji.
 
+
+##License
+GNU AGPLv3
 
 ##WIP
