@@ -18,9 +18,16 @@ public class Examples extends Controller {
                 "crtaj zuto: osnovna prosek.ukupno<3.5 ili bodovi.zavrsni<20\n" +
                 "crtaj #ee99ee: smer kvota<60\n" +
                 "crtaj crveno: ucenik upisao skola.okrug='gradbeograd'\n" +
-                "crtaj plavo: ucenik pohadjao skola.ime='matematicka gimnazija-ogled'\n" +
+                "crtaj plavo: ucenik pohadjao skola.ime='matematicka gimnazija'\n" +
                 "crtaj zeleno: smer kvota>=60");
-        examples[1] = new ExampleQuery("//kolicnik bodova na zavrsnom i proseka ocena u 6r, 7r i 8r (prosek ta tri proseka) u Matematickoj i dva smera Filoloske gimnazije (slucajno odabrana, isprobajte druge). Osnovne u Bosilegradu date za poredjenje, kao gori primeri. Idealno bi bilo 5-6 (6 ako je vukovac i ima max na zavrsnom ili 4.5 i 27 na zavrsnom, 5 je vukovac sa 25 na zavrsnom, odnosno odlikas sa 22.5). Sto veci broj, to veca \"vrednost\" ocena u skoli, ako uzmemo zavrsni kao objektivnu procenu znanja\n\nx:zaokruzi#1.bodovi.zavrsni/zaokruzi#1.prosek.ukupno\ncrtaj plavo: ucenik upisao skola.ime='matematickagimnazija'\ncrtaj zeleno: ucenik pohadjao skola.ime='matematickagimnazija-ogled'\ncrtaj tamnosivo: ucenik upisao skola.ime='filoloskagimnazija' i smer='klasicnijezici'\ncrtaj crveno: ucenik upisao skola.ime='filoloskagimnazija' i smer='engleskijezik'\ncrtaj narandzasto: ucenik prosek.ukupno>=4.5 pohadjao skola.mesto='bosilegrad' //odlikasi, jer kad uzmemo sve ucenike dobijamo prilicno cudne rezultate");
+        examples[1] = new ExampleQuery("//kolicnik bodova na zavrsnom i proseka ocena u 6r, 7r i 8r (prosek ta tri proseka) u Matematickoj i dva smera Filoloske gimnazije (slucajno odabrana, isprobajte druge). Osnovne u Bosilegradu date za poredjenje, kao gori primeri. Idealno bi bilo 5-6 (6 ako je vukovac i ima max na zavrsnom ili 4.5 i 27 na zavrsnom, 5 je vukovac sa 25 na zavrsnom, odnosno odlikas sa 22.5). Sto veci broj, to veca \"vrednost\" ocena u skoli, ako uzmemo zavrsni kao objektivnu procenu znanja\n" +
+                "\n" +
+                "y:zaokruzi#1.bodovi.zavrsni/zaokruzi#1.prosek.ukupno\n" +
+                "crtaj plavo: ucenik upisao skola.ime='matematickagimnazija'\n" +
+                "crtaj zeleno: ucenik pohadjao skola.ime='matematickagimnazija'\n" +
+                "crtaj tamnosivo: ucenik upisao skola.ime='filoloskagimnazija' i smer='obdareni učenici u filološkoj gimnaziji-klasični jezici'\n" +
+                "crtaj crveno: ucenik upisao skola.ime='filoloskagimnazija' i smer='obdareni učenici u filološkoj gimnaziji-engleski jezik'\n" +
+                "crtaj narandzasto: ucenik prosek.ukupno>=4.5 pohadjao skola.mesto='bosilegrad' //odlikasi, jer kad uzmemo sve ucenike dobijamo prilicno cudne rezultate");
         examples[2] = new ExampleQuery("//Bodovi na zavrsnom i prosek u skoli, u manjim i vecim skolama, na primeru srpskog jezika\n" +
                 "\n" +
                 "x:bodovi.srpski, y:prosek.srpski\n" +

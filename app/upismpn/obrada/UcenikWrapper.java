@@ -197,19 +197,24 @@ public class UcenikWrapper {
                     Integer.parseInt(e.getValue()));
         }
 
-        matematika = Float.parseFloat(uc.getMatematika());
-        srpski = Float.parseFloat(uc.getSrpski());
-        kombinovani = Float.parseFloat(uc.getKombinovani());
+        if (uc.getMatematika().equals("null")) matematika = 0;
+        else matematika = Float.parseFloat(uc.getMatematika());
+        if (uc.getSrpski().equals("null")) srpski = 0;
+        else srpski = Float.parseFloat(uc.getSrpski());
+        if (uc.getKombinovani().equals("null")) kombinovani = 0;
+        else kombinovani = Float.parseFloat(uc.getKombinovani());
 
         bodoviSaZavrsnog = matematika + srpski + kombinovani;
-        ukupnoBodova = Float.parseFloat(uc.getUkupnoBodova());
+        if (uc.getUkupnoBodova().equals("*")) ukupnoBodova = 0;
+        else ukupnoBodova = Float.parseFloat(uc.getUkupnoBodova());
         bodoviSaPrijemnog = (float) (ukupnoBodova - (bodoviIzSkole + bodoviSaZavrsnog));
 
         listaZelja = uc.getListaZelja().stream().map(SrednjaSkola::new).collect(Collectors.toList());
         brojZelja = listaZelja.size();
         upisanaSkola = new SrednjaSkola(uc.getUpisanaSkola());
         upisanaZelja = Integer.parseInt(uc.getUpisanaZelja());
-        krug = Integer.parseInt(uc.getKrug());
+        if (uc.getUkupnoBodova().equals("*")) krug = 0;
+        else krug = Integer.parseInt(uc.getKrug());
     }
 
     @Override

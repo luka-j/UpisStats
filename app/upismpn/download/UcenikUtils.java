@@ -38,7 +38,7 @@ public class UcenikUtils {
             try {
                 m.put(pair[0], pair[1]);
             } catch (ArrayIndexOutOfBoundsException ex) {
-                System.err.println("invalid: " + p);
+                System.err.println("UcenikUtils#stringArrayToMap OOB: " + p);
             }
         }
         return m;

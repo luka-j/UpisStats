@@ -11,7 +11,7 @@ import java.util.List;
 public class Parser {
 
 
-    private static final int CURRENT_YEAR = 2015;
+    private static final int CURRENT_YEAR = 2016;
     private final String rawInput;
     private String[] wantedProps = new String[3];
     private int propCount;
@@ -84,7 +84,7 @@ public class Parser {
         return ret;
     }
 
-    private String firstProp() {
+    private String firstWantedProp() {
         if (propCount == 2 && wantedProps[0].equals("sifra") && !wantedProps[1].equals("sifra")) return wantedProps[1];
         else return wantedProps[0];
     }
@@ -136,7 +136,7 @@ public class Parser {
                     a.setException(new ParseException(parts[0]));
                     return a;
                 }
-                a.append("SELECT AVG(").append(firstProp()).append(") ");
+                a.append("SELECT AVG(").append(firstWantedProp()).append(") ");
                 break;
             case "minimum":
             case "min":
@@ -152,9 +152,9 @@ public class Parser {
                     return a;
                 }
                 if (command.length == 1) {
-                    a.append("SELECT MIN(").append(firstProp()).append(") ");
+                    a.append("SELECT MIN(").append(firstWantedProp()).append(") ");
                 } else {
-                    a.append("SELECT (").append(firstProp()).append(") ");
+                    a.append("SELECT (").append(firstWantedProp()).append(") ");
                     order = -Integer.parseInt(command[1]);
                 }
                 break;
@@ -172,9 +172,9 @@ public class Parser {
                     return a;
                 }
                 if (command.length == 1) {
-                    a.append("SELECT MAX(").append(firstProp()).append(") ");
+                    a.append("SELECT MAX(").append(firstWantedProp()).append(") ");
                 } else {
-                    a.append("SELECT (").append(firstProp()).append(") ");
+                    a.append("SELECT (").append(firstWantedProp()).append(") ");
                     order = Integer.parseInt(command[1]);
                 }
                 break;
@@ -191,7 +191,7 @@ public class Parser {
                     a.setException(new ParseException(parts[0]));
                     return a;
                 }
-                a.append("SELECT COUNT(").append(firstProp()).append(") ");
+                a.append("SELECT COUNT(").append(firstWantedProp()).append(") ");
                 break;
             case "stampaj":
             case "dump":
@@ -209,9 +209,9 @@ public class Parser {
             a.append(parseQuery(parts[1]));
             if (order != 0) {
                 if (order < 0) {
-                    a.append(" order by ").append(firstProp()).append(" asc limit ").append(String.valueOf(-order));
+                    a.append(" order by ").append(firstWantedProp()).append(" asc limit ").append(String.valueOf(-order));
                 } else {
-                    a.append(" order by ").append(firstProp()).append(" desc limit ").append(String.valueOf(order));
+                    a.append(" order by ").append(firstWantedProp()).append(" desc limit ").append(String.valueOf(order));
                 }
             }
         } catch (ParseException e) {
