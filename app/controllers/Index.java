@@ -51,8 +51,8 @@ public class Index extends Controller {
         SmeroviBase.load();
         UceniciGroup all = new UceniciGroupBuilder(null).getGroup();
         System.out.println("Loaded everything; populating");
-        Ebean.execute(() -> all.forEach(Ucenik2016::create));
-        Ebean.execute(() -> all.forEach(Ucenik2016::populateZelje));
+        Ebean.execute(() -> all.forEach(Ucenik2015::create));
+        Ebean.execute(() -> all.forEach(Ucenik2015::populateZelje));
         populateSchoolAverages();
         System.out.println("Done");
         long end = System.currentTimeMillis();
@@ -61,7 +61,7 @@ public class Index extends Controller {
     }
 
     private void populateAveragesInner(Object s, String columnName, long id) {
-        List<Ucenik2016> group = Ucenik2016.finder.where().eq(columnName, id).findList();
+        List<Ucenik2015> group = Ucenik2015.finder.where().eq(columnName, id).findList();
         for (Method m : s.getClass().getMethods()) {
             if (m.getName().startsWith("set") && m.getParameterTypes()[0].equals(double.class)) {
                 try {
@@ -74,18 +74,18 @@ public class Index extends Controller {
         for (Field f : s.getClass().getFields()) {
             if (f.getType().equals(double.class)) {
                 try {
-                    if (Ucenik2016.class.getField(f.getName()).getType().equals(int.class)) {
-                        f.setDouble(s, group.stream().mapToInt((Ucenik2016 uc) -> {
+                    if (Ucenik2015.class.getField(f.getName()).getType().equals(int.class)) {
+                        f.setDouble(s, group.stream().mapToInt((Ucenik2015 uc) -> {
                             try {
-                                return Ucenik2016.class.getField(f.getName()).getInt(uc);
+                                return Ucenik2015.class.getField(f.getName()).getInt(uc);
                             } catch (IllegalAccessException | NoSuchFieldException e) {
                                 throw new RuntimeException(e);
                             }
                         }).average().getAsDouble());
                     } else {
-                        f.setDouble(s, group.stream().mapToDouble((Ucenik2016 uc) -> {
+                        f.setDouble(s, group.stream().mapToDouble((Ucenik2015 uc) -> {
                             try {
-                                return Ucenik2016.class.getField(f.getName()).getDouble(uc);
+                                return Ucenik2015.class.getField(f.getName()).getDouble(uc);
                             } catch (IllegalAccessException | NoSuchFieldException e) {
                                 throw new RuntimeException(e);
                             }
@@ -102,11 +102,11 @@ public class Index extends Controller {
     public Result populateSchoolAverages() {
         if (!INIT_PHASE) return forbidden("Init phase over");
         Ebean.execute(() -> {
-            Smer2016.finder.findEach((Smer2016 s) -> {
+            Smer2015.finder.findEach((Smer2015 s) -> {
                 populateAveragesInner(s, "upisana_id", s.id);
                 s.save();
             });
-            OsnovnaSkola2016.finder.findEach((OsnovnaSkola2016 s) -> {
+            OsnovnaSkola2015.finder.findEach((OsnovnaSkola2015 s) -> {
                 populateAveragesInner(s, "osnovna_id", s.id);
                 s.save();
             });
@@ -147,7 +147,7 @@ public class Index extends Controller {
                     if (ac.isOk()) {
                         jsonAction.put("type", ac.getAction());
                         if (ac.getAction() == Parser.Action.DUMP) {
-                            Ucenik uc = Ucenik2016.finder.where().eq("sifra", Integer.parseInt(ac.getQuery())).findUnique(); //todo year-agnostic
+                            Ucenik uc = Ucenik2015.finder.where().eq("sifra", Integer.parseInt(ac.getQuery())).findUnique(); //todo year-agnostic
                             jsonAction.put("data", String.valueOf(uc));
                         } else {
                             PreparedStatement st = conn.prepareStatement(ac.getQuery());

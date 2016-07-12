@@ -68,7 +68,7 @@ public class CharUtils {
     }
 
     public static String stripAll(String str) {
-        return toLatin(stripGuillemets(str.replace(" ", "").toLowerCase()));
+        return toLatin(stripGuillemets(str.replaceAll(" |'|\"|-|\\.", "").toLowerCase()));
     }
 
     public static String latinize(String str) {

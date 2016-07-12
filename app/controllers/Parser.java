@@ -41,38 +41,13 @@ public class Parser {
         if (content.length - firstLine < 2) throw new ParseException("Nema upita");
         if (content.length - firstLine > 13) throw new ParseException("Previše upita (trenutni maksimum je dvanaest)");
 
-        String[] axis = content[firstLine].split("\\s*,\\s*");
-        if (axis.length > 3) throw new ParseException("Previše osa");
+        String[] axes = content[firstLine].split("\\s*,\\s*");
+        if (axes.length > 3) throw new ParseException("Previše osa");
 
-        for (int i = 0; i < axis.length; i++)
-            axis[i] = axis[i].replace(" ", "");
-        //if(axis.length == 1 && !axis[0].startsWith("x:")) throw new ParseException("ose nisu dobro obeležene");
+        for (int i = 0; i < axes.length; i++)
+            axes[i] = axes[i].replace(" ", "");
 
-        if (!axis[0].startsWith("x:") && axis.length == 2) swap(axis, 0, 1);
-        if (axis.length == 3) {
-            if (!axis[0].startsWith("x:")) swap(axis, 0, 2);
-            if (!axis[1].startsWith("y:")) swap(axis, 1, 2);
-        }
-        for (int i = 0; i < axis.length; i++) {
-            String[] props = axis[i].split(":");
-            if (props.length != 2 || !(props[0].startsWith("x") || props[0].startsWith("y") || props[0].startsWith("z"))) {
-                throw new ParseException("ose nisu dobro obeležene");
-            }
-            if (props[1].startsWith("bodovi.takmicenje."))
-                throw new ParseException("Trenutno nije podrzano plotovanje statistike s takmičenja"); //todo
-            axesNames[i] = props[1];
-            String potentialProp = parseProp(props[1]);
-            if (isStringProp(potentialProp)) throw new ParseException("Crtanje teksta nije moguće");
-            else wantedProps[i] = potentialProp;
-        }
-        if (axis.length == 1) {
-            wantedProps[1] = wantedProps[0];
-            wantedProps[0] = "sifra";
-            axesNames[1] = axesNames[0];
-            axesNames[0] = "sifra";
-        }
-        propCount = Math.max(2, axis.length);
-
+        setWantedProps(axes, axesNames);
 
         for (int i = firstLine + 1; i < content.length; i++) {
             Action ac = parseLine(content[i]);
@@ -82,6 +57,36 @@ public class Parser {
             }
         }
         return ret;
+    }
+
+    private void setWantedProps(String[] axes, String[] axesNames) throws ParseException {
+        if (!axes[0].startsWith("x:") && axes.length == 2) swap(axes, 0, 1);
+        if (axes.length == 3) {
+            if (!axes[0].startsWith("x:")) swap(axes, 0, 2);
+            if (!axes[1].startsWith("y:")) swap(axes, 1, 2);
+        }
+        for (String axe : axes) {
+            String[] props = axe.split(":");
+            int pos;
+            switch (props[0]) {
+                case "x": pos = 0;break;
+                case "y": pos = 1;break;
+                case "z": pos = 2;break;
+                default:
+                    throw new ParseException("ose nisu dobro obeležene");
+            }
+            if (props[1].startsWith("bodovi.takmicenje."))
+                throw new ParseException("Trenutno nije podrzano plotovanje statistike s takmičenja"); //todo
+            axesNames[pos] = props[1];
+            String potentialProp = parseProp(props[1]);
+            if (isStringProp(potentialProp)) throw new ParseException("Crtanje teksta nije moguće");
+            else wantedProps[pos] = potentialProp;
+        }
+        if (axes.length == 1) {
+            if(wantedProps[0] == null) wantedProps[0]="sifra";
+            else wantedProps[1]="sifra";
+        }
+        propCount = Math.max(2, axes.length);
     }
 
     private String firstWantedProp() {
@@ -185,12 +190,12 @@ public class Parser {
                     a.setException(new ParseException(query));
                     return a;
                 }
-                a.action = Action.COUNT;
-                a.axesCount = 1;
-                if (command.length > 1) {
+                if (command.length != 1) {
                     a.setException(new ParseException(parts[0]));
                     return a;
                 }
+                a.action = Action.COUNT;
+                a.axesCount = 1;
                 a.append("SELECT COUNT(").append(firstWantedProp()).append(") ");
                 break;
             case "stampaj":
@@ -231,17 +236,14 @@ public class Parser {
     private String parseProp(String srProp) throws ParseException {
         StringBuilder parsed = new StringBuilder(srProp.length());
         StringBuilder buff = new StringBuilder(srProp.length() / 2);
-        boolean dividend = false, inSingleQuotes = false, inDoubleQuotes = false;
+        boolean dividend = false, inQuotes = false;
         for (int i = 0; i < srProp.length(); i++) {
             if (srProp.charAt(i) == '\'') {
                 buff.append("'");
-                inSingleQuotes = !inSingleQuotes;
-            } else if (srProp.charAt(i) == '"') {
-                buff.append("\"");
-                inDoubleQuotes = !inDoubleQuotes;
+                inQuotes = !inQuotes;
             } else if (srProp.charAt(i) == '(') {
                 parsed.append(srProp.charAt(i));
-            } else if (!inSingleQuotes && !inDoubleQuotes &&
+            } else if (!inQuotes &&
                     (srProp.charAt(i) == '+' || srProp.charAt(i) == '-' || srProp.charAt(i) == '*' || srProp.charAt(i) == '/'
                             || srProp.charAt(i) == '>' || srProp.charAt(i) == '<' || srProp.charAt(i) == '=' || srProp.charAt(i) == '!'
                             || srProp.charAt(i) == ')')) {
@@ -342,6 +344,10 @@ public class Parser {
                 case "6r.prosek":
                     result = "prosek_sesti";
                     break;
+                case "drugistrani":
+                case "stranijezik.ime":
+                    result = "drugi_strani_jezik";
+                    break;
 
                 case "ime":
                 case "skola.ime":
@@ -395,7 +401,7 @@ public class Parser {
             }
         }
         if (result == null)
-            throw new ParseException(prop);
+            throw new ParseException("nepostojeći prop: " + prop);
         if (round == 0) {
             result = "ROUND(" + result + ")";
         } else if (round != -1) {
@@ -598,16 +604,15 @@ public class Parser {
 
     private List<String> tokenize(String query) { //doesn't tokenize <>!= properly
         query = query.replaceAll("\\s+|\\\\\\n", " ").trim();
-        boolean inSingleQuotes = false, inDoubleQuotes = false;
+        boolean inQuotes = false;
         List<String> tokens = new ArrayList<>(query.length() / 16);
         StringBuilder curr = new StringBuilder(16);
         for (int i = 0; i < query.length(); i++) {
-            if (!inSingleQuotes && !inDoubleQuotes && i + 1 < query.length() && query.charAt(i) == '/' && query.charAt(i + 1) == '/') {
+            if (!inQuotes && i + 1 < query.length() && query.charAt(i) == '/' && query.charAt(i + 1) == '/') {
                 break;
             }
-            if (query.charAt(i) == '\'') inSingleQuotes = !inSingleQuotes;
-            if (query.charAt(i) == '"') inDoubleQuotes = !inDoubleQuotes;
-            if (query.charAt(i) == ' ' && !inSingleQuotes && !inDoubleQuotes) {
+            if (query.charAt(i) == '\'') inQuotes = !inQuotes;
+            if (query.charAt(i) == ' ' && !inQuotes) {
                 if (query.charAt(i + 1) == '+' || query.charAt(i + 1) == '-' || query.charAt(i + 1) == '*' || query.charAt(i + 1) == '/')
                     continue;
                 if (i > 0 && (query.charAt(i - 1) == '+' || query.charAt(i - 1) == '-' || query.charAt(i - 1) == '*' || query.charAt(i - 1) == '/'))

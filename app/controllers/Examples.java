@@ -11,7 +11,7 @@ import play.mvc.Result;
  * Created by luka on 27.6.16..
  */
 public class Examples extends Controller {
-    private static final ExampleQuery[] examples = new ExampleQuery[5];
+    private static final ExampleQuery[] examples = new ExampleQuery[6];
 
     static {
         examples[0] = new ExampleQuery("x:zaokruzi#1.prosek.srpski, y:zaokruzi#1.prosek.matematika\n" +
@@ -47,6 +47,11 @@ public class Examples extends Controller {
                 "broj: ucenik prosek.likovno<4.5\n" +
                 "broj: osnovna prosek.likovno=5 //osnovne u kojima svako (ko je upisao srednju) ima 5 iz likovnog\n" +
                 "prosek: ucenik prosek.likovno!=0 //ucenici skola za osnovno obrazovanje odraslih imaju nulu kao ocenu iz likovnog");
+        examples[5] = new ExampleQuery("//prosek učenika iz svih predmeta i prosek bodova na završnom u svakoj osnovnoj školi u Srbiji, prethodne (plavo) i ove (žućkasto) godine\n" +
+                "\n" +
+                "x:zaokruzi#1.prosek.ukupno, y:zaokruzi#1.bodovi.zavrsni\n" +
+                "crtaj plavo: 2015.osnovna\n" +
+                "crtaj #bbbb33: osnovna");
     }
 
     public Result randomExample() {
