@@ -27,7 +27,14 @@
                 <div id="help-links">
                     <a id="show-help" onclick="toggleHelp()" href="#">Pomoć</a>
                     <a id="roll-example" onclick="randomExample()" href="#">Isprobaj još primera</a>
+                    <a id="share-query" onclick="shareQuery()" href="#">Podeli</a>
                 </div>
+                <form action="#" id="share-link-form">
+                    <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                        <input class="mdl-textfield__input" type="text" id="share-link">
+                        <label class="mdl-textfield__label" for="share-link">Link</label>
+                    </div>
+                </form>
                 <p id="help-text">
                     Prvi red se odnosi na podatke koji se prikazuju na grafikonu, odnosno šta je na kojoj osi.<br>
                     Naredni redovi su skup komandi. Mogući tipovi komandi su: crtaj [boja], max [koliko], min [koliko], prosek, broj<br>

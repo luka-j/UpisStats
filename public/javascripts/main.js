@@ -3,6 +3,7 @@ var httpRequest;
 window.onload = function () {
     var query = document.getElementById("query-area");
     if (query.value == "") initialExample(); //todo move caret to end after this
+    else doQuery();
 };
 
 function doQuery() {
@@ -21,6 +22,7 @@ function makeRequest(url, callback) {
     var spinner = document.getElementById("query-spinner");
     spinner.style.display = 'block';
     button.style.display = 'none';
+    document.getElementById('share-link-form').style.display = 'none';
 
     httpRequest.onreadystatechange = callback;
     httpRequest.open('GET', url);
@@ -142,4 +144,14 @@ function randomExample() {
 
 function initialExample() {
     makeRequest("/examples/initial", exampleQueryCallback);
+}
+
+function shareQuery() {
+    var linkBox = document.getElementById("share-link");
+    var query = document.getElementById("query-area").value;
+
+    linkBox.value = "upis.ml/query?initial="+encodeURIComponent(query);
+    document.getElementById("share-link-form").style.display='inline-block';
+    linkBox.focus();
+    linkBox.select();
 }

@@ -63,6 +63,10 @@ a {
     margin-right: 5em;
 }
 
+#roll-example {
+    margin-right: 5em;
+}
+
 #all-examples {
     margin-left: 4em;
 }
@@ -74,6 +78,10 @@ a {
     display: none;
     margin-bottom: 1em;
     color: #555555
+}
+
+#share-link-form {
+    display: none;
 }
 
 #errors-text {
