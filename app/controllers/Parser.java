@@ -83,14 +83,14 @@ public class Parser {
             else wantedProps[pos] = potentialProp;
         }
         if (axes.length == 1) {
-            if(wantedProps[0] == null) wantedProps[0]="sifra";
-            else wantedProps[1]="sifra";
+            if(wantedProps[0] == null) wantedProps[0]="id";
+            else wantedProps[1]="id";
         }
         propCount = Math.max(2, axes.length);
     }
 
     private String firstWantedProp() {
-        if (propCount == 2 && wantedProps[0].equals("sifra") && !wantedProps[1].equals("sifra")) return wantedProps[1];
+        if (propCount == 2 && wantedProps[0].equals("id") && !wantedProps[1].equals("id")) return wantedProps[1];
         else return wantedProps[0];
     }
 
@@ -313,6 +313,10 @@ public class Parser {
                     break;
                 case "bodovi.prijemni":
                     result = "bodovi_sa_prijemnog";
+                    break;
+                case "bodovi.ukupno":
+                case "bodovi":
+                    result = "bodovi_ukupno";
                     break;
                 case "bodovi.zavrsni.matematika":
                 case "bodovi.matematika":

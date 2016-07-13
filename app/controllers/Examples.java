@@ -11,7 +11,7 @@ import play.mvc.Result;
  * Created by luka on 27.6.16..
  */
 public class Examples extends Controller {
-    private static final ExampleQuery[] examples = new ExampleQuery[6];
+    private static final ExampleQuery[] examples = new ExampleQuery[7];
 
     static {
         examples[0] = new ExampleQuery("x:zaokruzi#1.prosek.srpski, y:zaokruzi#1.prosek.matematika\n" +
@@ -52,6 +52,19 @@ public class Examples extends Controller {
                 "x:zaokruzi#1.prosek.ukupno, y:zaokruzi#1.bodovi.zavrsni\n" +
                 "crtaj plavo: 2015.osnovna\n" +
                 "crtaj #bbbb33: osnovna");
+        examples[6] = new ExampleQuery("//sve nakon // je komentar, tj. objašnjenje datog upita. Za imena, nebitno je da li se nalaze unutar jednostrukih (') ili dvostrukih (\") navodnika, kao ni da li se kucaju razmaci, veliko slovo, navodnici ili crtica\n" +
+                "\n" +
+                "x:bodovi.zavrsni, y:zaokruzi#1.prosek.ukupno\n" +
+                "\n" +
+                "crtaj plavo: ucenik upisao podrucje='gimnazija' i okrug='gradbeograd' //svi učenici koji su upisali neku od beogradskih gimnazija, na x osi su bodovi sa završnog ispita, dok se na y osi nalaze proseci uspeha u šestom, sedmom i osmom razredu, zaokruženi na jednu decimalu. Veći krug - više učenika s tim brojem bodova i (zaokruženim) ukupnim prosekom\n" +
+                "\n" +
+                "broj: ucenik upisao podrucje='gimnazija' i okrug='gradbeograd' //2, broj učenika koji su upisali gimnaziju u Beogradu\n" +
+                "prosek: ucenik upisao podrucje='gimnazija' i okrug='gradbeograd' //3, prosek bodova na završnom učenika iz BG gimn. (za komandu \"prosek\" gledaju se vrednosti sa x ose)\n" +
+                "prosek: ucenik bodovi.prijemni=0 upisao podrucje='gimnazija' i okrug='gradbeograd' //4, prosek onih koji nisu polagali poseban prijemni ispit za upis, tj. \"obične\" gimnazije\n" +
+                "\n" +
+                "prosek: ucenik upisao ime='matematickagimnazija' //5, učenici koji su upisali MG\n" +
+                "prosek: ucenik pohadjao ime='matematickagimnazija' //6, učenici koji su u 7. i 8. razredu pohađali MG\n" +
+                "prosek: ucenik upisao ime='filoloskagimnazija' //7, učenici koji su upisali FG");
     }
 
     public Result randomExample() {

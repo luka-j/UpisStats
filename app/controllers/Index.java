@@ -30,7 +30,8 @@ import java.util.Map;
  */
 public class Index extends Controller {
     private static final boolean INIT_PHASE = false;
-    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = false;
+    private static final boolean LOG_QUERY_ERRORS = true;
 
     static Index instance; //well, shit
     //(need this for proper db injection)
@@ -197,16 +198,19 @@ public class Index extends Controller {
                     } else {
                         if (DEBUG) System.err.println("minor parseex");
                         jsonAction.put("error", ac.getExceptionDetails());
+                        if(LOG_QUERY_ERRORS) System.err.println("minor parseex: " + query);
                     }
                 } catch (SQLException e) {
                     if (DEBUG) System.err.println("sqlex");
                     jsonAction.put("error", "SQLException: " + ac.getQuery());
                     if (DEBUG) e.printStackTrace();
+                    if(LOG_QUERY_ERRORS) System.err.println("sqlex " + query);
                 }
                 ret.add(jsonAction);
             }
         } catch (Parser.ParseException e) {
             if (DEBUG) System.err.println("major parseex");
+            if(LOG_QUERY_ERRORS) System.err.println("major parseex: " + query);
             ObjectNode errorNode = Json.newObject();
             errorNode.put("error", e.getMessage());
             ret.add(errorNode);

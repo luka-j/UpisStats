@@ -3,8 +3,8 @@
 <html>
     <head>
         <meta charset="UTF-8"/>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Query data</title>
+        <meta name="viewport" content="width=device-width">
+        <title>UpisStats</title>
 
         <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
         <link rel="stylesheet" href="https://code.getmdl.io/1.1.3/material.deep_orange-blue.min.css" />
@@ -42,10 +42,13 @@
                     Ostatak komande se odnosi na uslove, tj. koji učenici/škole/smerovi se crtaju <br>
                     Mogući parametri za crtanje i uslove. U slučaju škola, odnosno smerova, parametri predstavljaju prosek koji su učenici u toj školi imali (odnosno koji je prosek za dati parametar u budućoj generaciji tog smera): <br>
                     <br>
-                    brojZelja, krug, sifra - redom, broj iskazanih želja, krug u kom je učenik upisan i njegova šifra za upis <br>
+                    sifra - šifra učenika za upis <br>
+                    zelje.broj, zelje.upisana - broj iskazanih želja i redni broj škole koju je učenik upisao na njegovoj/njenoj listi želja<br>
+                    krug - krug u kojem je učenik upisan, 0 ako je upisan po odluci OUK-a (u 2016.), 1 i 2 za prvi i drugi <br>
+                    bodovi.ukupno - ukupan broj bodova, uključujući i prijemni ispit u nekoj od specijalnih škola, ako je učenik polagao <br>
                     bodovi.zavrsni, bodovi.skola, bodovi.prijemni - bodovi za upis koji je dati učenik osvojio (prijemni se odnosi na prijemne ispite u specijalnim školama) <br>
                     bodovi.matematika, bodovi.srpski, bodovi.kombinovani - broj bodova za svaki od tri završna ispita <br>
-                    bodovi.takmicenja - broj bodova koje nosi nagrada na nekom od državnih ili međunarodnih takmičenja <br>
+                    bodovi.takmicenja - broj bodova koje nosi nagrada na nekom od državnih ili međunarodnih takmičenja (0 za 2016.) <br>
                     6r.prosek, 7r.prosek, 8r.prosek, prosek.ukupno - prosek ocena u datom razredu ili u sva tri <br>
                     6r.[predmet], 7r.[predmet], 8r.[predmet], prosek.[predmet] - ocena iz datog predmeta u određenom razredu, odnosno prosek u sve tri godine <br>
                     Mogući predmeti su: srpski, matematika, fizika, hemija (za 7r i 8r), engleski, drugiStrani, geografija, biologija, istorija, likovno, tehnicko, muzicko, fizicko, sport, vladanje <br>
