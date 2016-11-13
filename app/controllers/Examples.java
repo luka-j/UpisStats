@@ -39,9 +39,10 @@ public class Examples extends Controller {
                 "crtaj plavo: ucenik pohadjao skola.ucenika<=40\n" +
                 "crtaj crveno: ucenik pohadjao skola.okrug='gradbeograd' i skola.ucenika>40\n" +
                 "crtaj zeleno: ucenik upisao skola.ime='matematickagimnazija'");
-        examples[4] = new ExampleQuery("//ocene iz likovnog: koliko ucenika, odnosno skola, ima sve petice, a koliko je odlicnih? Koji je prosek?\n" +
+        examples[4] = new ExampleQuery("//ocene iz likovnog: koliko učenika, odnosno škola, ima sve petice, a koliko je odličnih? Koji je prosek?\n" +
                 "\n" +
                 "x:prosek.likovno\n" +
+                "crtaj plavo: osnovna\n" +
                 "broj: ucenik prosek.likovno<5 //oni koji nisu imali petice u sva tri razreda\n" +
                 "broj: ucenik prosek.likovno=5\n" +
                 "broj: ucenik prosek.likovno<4.5\n" +
