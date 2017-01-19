@@ -328,7 +328,7 @@ public class Parser {
                     break;
                 case "bodovi.zavrsni.kombinovani":
                 case "bodovi.kombinovani":
-                    result = "matematika";
+                    result = "kombinovani";
                     break;
                 case "bodovi.takmicenja.ukupno":
                 case "bodovi.takmicenje.ukupno":
