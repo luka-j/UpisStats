@@ -104,7 +104,7 @@ public class Examples extends Controller {
 
         public JsonNode getResult() {
             if (result == null) {
-                result = Index.instance.parseQuery(query);
+                result = Index.instance.parseQuery(query).result;
             }
             return result;
         }

@@ -44,7 +44,7 @@ function displayContents(httpRequest, response) {
     var spinner = document.getElementById("query-spinner");
 
     if (httpRequest.readyState === XMLHttpRequest.DONE) {
-        if (httpRequest.status === 200) {
+        if (httpRequest.status <= 400) {
             var data = [];
             for (var i = 0; i < response.length; i++) {
                 if (response[i].error) {

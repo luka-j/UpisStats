@@ -606,7 +606,7 @@ public class Parser {
         throw new ParseException(tokens.get(i) + ", query too long");
     }
 
-    private List<String> tokenize(String query) { //doesn't tokenize <>!= properly
+    private List<String> tokenize(String query) { //todo doesn't tokenize <>!= properly
         query = query.replaceAll("\\s+|\\\\\\n", " ").trim();
         boolean inQuotes = false;
         List<String> tokens = new ArrayList<>(query.length() / 16);

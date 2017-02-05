@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.inject.Inject;
 import models.*;
+import org.intellij.lang.annotations.MagicConstant;
 import play.http.HttpEntity;
 import play.libs.Json;
 import play.mvc.Controller;
@@ -120,22 +121,44 @@ public class Index extends Controller {
                 "Probajte ponovo za par minuta", "UTF-8"));
 
         try {
-            ArrayNode res = parseQuery(query);
-            if (res != null) return ok(res);
+            ParseResult res = parseQuery(query);
+            if (res != null) {
+                if(res.status == ParseResult.SUCCESS)
+                    return ok(res.result);
+                else if(res.status == ParseResult.PARTIAL_FAIL)
+                    return status(201, res.result);
+                else if(res.status == ParseResult.TOTAL_FAIL)
+                    return badRequest(res.result);
+                throw new RuntimeException("invalid ParseResult status... screwed up pretty bad");
+            }
             else return internalServerError("db unavailable");
         } catch (ConnectionException ex) {
             return internalServerError(ex.getMessage());
         }
     }
 
-    public ArrayNode parseQuery(String query) {
+    static class ParseResult {
+        static final int SUCCESS=0;
+        static final int PARTIAL_FAIL=1;
+        static final int TOTAL_FAIL=2;
+        public final ArrayNode result;
+        public final @MagicConstant int status;
+
+        private ParseResult(ArrayNode result, @MagicConstant int status) {
+            this.result = result;
+            this.status = status;
+        }
+    }
+    public ParseResult parseQuery(String query) {
         if (db == null) return null;
         Parser p = new Parser(query);
         ArrayNode ret = Json.newArray();
+        boolean partialFail=false, totalFail=false;
         //if (DEBUG) System.out.println("got query: " + query);
 
         Connection conn = null;
         try {
+            int errors = 0;
             List<Parser.Action> acs = p.parse();
 
             conn = db.getConnection();
@@ -198,21 +221,26 @@ public class Index extends Controller {
                     } else {
                         if (DEBUG) System.err.println("minor parseex");
                         jsonAction.put("error", ac.getExceptionDetails());
+                        errors++;
                         if(LOG_QUERY_ERRORS) System.err.println("minor parseex: " + query);
                     }
                 } catch (SQLException e) {
                     if (DEBUG) System.err.println("sqlex");
                     jsonAction.put("error", "SQLException: " + ac.getQuery());
+                    errors++;
                     if (DEBUG) e.printStackTrace();
                     if(LOG_QUERY_ERRORS) System.err.println("sqlex " + query);
                 }
                 ret.add(jsonAction);
             }
+            if(errors>0) partialFail=true;
+            if(errors==acs.size()) totalFail=true;
         } catch (Parser.ParseException e) {
             if (DEBUG) System.err.println("major parseex");
             if(LOG_QUERY_ERRORS) System.err.println("major parseex: " + query);
             ObjectNode errorNode = Json.newObject();
             errorNode.put("error", e.getMessage());
+            totalFail = true;
             ret.add(errorNode);
         } finally {
             try {
@@ -224,7 +252,10 @@ public class Index extends Controller {
                 System.err.println("errorcode: " + e.getErrorCode() + ", sql state: " + e.getSQLState());
             }
         }
-        return ret;
+        int status=ParseResult.SUCCESS;
+        if(partialFail) status=ParseResult.PARTIAL_FAIL;
+        if(totalFail) status=ParseResult.TOTAL_FAIL;
+        return new ParseResult(ret, status);
     }
 
     public Result hw() {
