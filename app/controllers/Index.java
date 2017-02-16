@@ -171,7 +171,7 @@ public class Index extends Controller {
                     if (ac.isOk()) {
                         jsonAction.put("type", ac.getAction());
                         if (ac.getAction() == Parser.Action.DUMP) {
-                            Ucenik uc = Ucenik2015.finder.where().eq("sifra", Integer.parseInt(ac.getQuery())).findUnique(); //todo year-agnostic
+                            Ucenik uc = Ucenik2016.finder.where().eq("sifra", Integer.parseInt(ac.getQuery())).findUnique(); //todo year-agnostic
                             jsonAction.put("data", String.valueOf(uc));
                         } else {
                             PreparedStatement st = conn.prepareStatement(ac.getQuery());

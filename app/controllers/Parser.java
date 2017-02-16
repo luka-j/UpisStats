@@ -295,7 +295,7 @@ public class Parser {
             String literal = prop.substring(1, prop.length() - 1);
             literal = CharUtils.stripAll(literal);
             return "'" + literal + "'";
-        } else if (prop.equals("krug") || prop.equals("sifra")) result = prop;
+        } else if (prop.equals("krug") || prop.equals("sifra") || prop.equals("id")) result = prop;
         else {
             switch (prop) {
                 case "zelje.broj":
