@@ -5,11 +5,11 @@ Plotuje statistiku podataka s upisa u srednje škole
 
 Demo: ![Example](http://i.imgur.com/RXxeoiC.png)
 
-###Ideja
+### Ideja
 Query language koji će biti razumljiv i na srpskom (postoje engleski oblici za neke komande) i koji će biti dovoljno sličan SQLu tako da mogu da ga prevedem i izvršim bez mnogo muke. "Srce" svega je controllers.Parser koji zapravo radi to prevođenje, i vraća Listu Action-a koje u sebi sadrže tip upita, SQL query i broj osa i njihova imena, uz boju ako je tip upita PLOT.
 
 
-###Parsiranje
+### Parsiranje
 Metode, redom:
 - parse() - čita i prevodi prvi red (ose), i deli ostatak upita na linije (prema novom redu ili ;)
 - parseLine(String) - radi na prvom delu reda, tj. za upit tipa `{akcija} [details...]: {šta} [uslovi...]` posmatra deo pre dvotačke, gradi početak SQL query-ja (`SELECT ...`) dok ostatak prosleđuje u parseQuery
@@ -48,14 +48,14 @@ Metode, redom:
   - prosek.{predmet} - {predmet}_p - prosek ocena iz nekog predmeta u sva tri razreda. Predmeti su: srpski, matematika, fizika, hemija (za 7r i 8r), engleski, drugiStrani, geografija, biologija, istorija, likovno, tehnicko, muzicko, fizicko, sport, vladanje
    
   
-###Podaci
+### Podaci
 Podaci su preuzeti sa sajta za upis MPN prošle godine koristeći [scrapper](https://github.com/luq-0/Upis15Crawler), i biti će preuzeti ponovo kad bude objavljen raspored po školama, za ovu godinu. Unutar ovog projekta se nalazi manja verzija istog scrappera (bez nekih delova za output), u pakovanju `upismpn`.
 
 Izlaz tog scrappera je transformisan u bazu (v. controllers.Index#populateDb), čiji se kompresovan dump nalazi na [Dropboxu](https://www.dropbox.com/s/9dhp48bgy8p16vz/upisdb060217.tar.xz?dl=0). U pitanju je PostgreSQL baza i potrebno je prvo ekstraktovati tar fajl iz dumpa, zatim učitati podatke koristeći `pg_restore`. Nazivi kolona i njihovo objašnjenje su dati u prethodnom odeljku (između prve i druge, odnosno posle druge, crtice).
 
 Svaka tabela ima svoju klasu. Svaka godina ima svoju tabelu. Klase bez godina su obeležene kao `@MappedSupperclass` i u njima se nalaze sva primitivna polja koja nasleđuju `@Entity`-ji.
 
-###TO-DO
+### TO-DO
 Videti issues
 
 Dokumentacija
@@ -64,5 +64,5 @@ Testiranje
 
 Još primera je dobrodošlo
 
-##License
+## License
 GNU AGPLv3
