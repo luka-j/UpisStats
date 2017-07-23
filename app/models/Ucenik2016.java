@@ -45,12 +45,12 @@ public class Ucenik2016 extends Ucenik {
         uc.osnovna = OsnovnaSkola2016.create(os.ime, os.mesto, os.okrug);
         uc.save();
 
-
         for (Map.Entry<UcenikWrapper.Takmicenje, Integer> tak : from.takmicenja.entrySet()) {
             uc.takmicenja.add(Takmicenje2016.create(uc, tak.getKey().predmet, tak.getValue(), tak.getKey().mesto, tak.getKey().rang));
         }
         return uc;
     }
+
 
     public String toString() {
         StringBuilder str = new StringBuilder();

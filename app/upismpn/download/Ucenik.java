@@ -290,17 +290,16 @@ public class Ucenik {
     }
 
     public String toCompactString() {
-        StringBuilder compactString = new StringBuilder();
-        compactString.append(osnovnaSkola).append("\\").append(mestoOS).append("\\").append(okrugOS).append("\n");
-        compactString.append(UcenikUtils.mapToStringBuilder(UcenikUtils.PredmetiDefault.compress(sestiRaz)));
-        compactString.append(UcenikUtils.mapToStringBuilder(UcenikUtils.PredmetiDefault.compress(sedmiRaz)));
-        compactString.append(UcenikUtils.mapToStringBuilder(UcenikUtils.PredmetiDefault.compress(osmiRaz)));
-        compactString.append(UcenikUtils.mapToStringBuilder(UcenikUtils.PredmetiDefault.compress(takmicenja)));
-        compactString.append(matematika).append("\\").append(srpski).append("\\").append(kombinovani).append("\n");
-        compactString.append(ukupnoBodova).append("\n");
-        compactString.append(UcenikUtils.listToStringBuilder(listaZelja));
-        compactString.append(upisanaSkola).append("\\").append(upisanaZelja).append("\\").append(krug);
-        return compactString.toString();
+        String compactString = osnovnaSkola + "\\" + mestoOS + "\\" + okrugOS + "\n" +
+                UcenikUtils.mapToStringBuilder(UcenikUtils.PredmetiDefault.compress(sestiRaz)) +
+                UcenikUtils.mapToStringBuilder(UcenikUtils.PredmetiDefault.compress(sedmiRaz)) +
+                UcenikUtils.mapToStringBuilder(UcenikUtils.PredmetiDefault.compress(osmiRaz)) +
+                UcenikUtils.mapToStringBuilder(UcenikUtils.PredmetiDefault.compress(takmicenja)) +
+                matematika + "\\" + srpski + "\\" + kombinovani + "\n" +
+                ukupnoBodova + "\n" +
+                UcenikUtils.listToStringBuilder(listaZelja) +
+                upisanaSkola + "\\" + upisanaZelja + "\\" + krug;
+        return compactString;
     }
 
     public static class Skola {

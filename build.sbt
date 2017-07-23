@@ -9,6 +9,7 @@ scalaVersion := "2.11.7"
 libraryDependencies ++= Seq(
   javaJdbc, cache, javaWs,
   "org.postgresql" % "postgresql" % "9.4-1206-jdbc42",
+  "com.google.code.gson" % "gson" % "2.8.1",
   "org.jsoup" % "jsoup" % "1.9.1"
 )
 

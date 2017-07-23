@@ -11,6 +11,7 @@ import play.http.HttpEntity;
 import play.libs.Json;
 import play.mvc.Controller;
 import play.mvc.Result;
+import upismpn.obrada.OsnovneBase;
 import upismpn.obrada.SmeroviBase;
 import upismpn.obrada.UceniciGroup;
 import upismpn.obrada.UceniciGroupBuilder;
@@ -30,9 +31,10 @@ import java.util.Map;
  * Created by luka on 5.5.16..
  */
 public class Index extends Controller {
-    private static final boolean INIT_PHASE = false;
+    private static final boolean INIT_PHASE = true;
     private static final boolean DEBUG = false;
     private static final boolean LOG_QUERY_ERRORS = true;
+    public static final int CURRENT_YEAR = 15;
 
     static Index instance; //well, shit
     //(need this for proper db injection)
@@ -74,7 +76,8 @@ public class Index extends Controller {
             }
         }
         for (Field f : s.getClass().getFields()) {
-            if (f.getType().equals(double.class)) {
+            if (f.getType().equals(double.class) && !f.getName().toLowerCase().endsWith("real") &&
+                    !f.getName().startsWith("procenat")) {
                 try {
                     if (Ucenik2015.class.getField(f.getName()).getType().equals(int.class)) {
                         f.setDouble(s, group.stream().mapToInt((Ucenik2015 uc) -> {
@@ -113,6 +116,14 @@ public class Index extends Controller {
                 s.save();
             });
         });
+        return ok("Done");
+    }
+
+    public Result fillInNeupisani() {
+        if (!INIT_PHASE) return forbidden("Init phase over");
+        OsnovneBase.load();
+        System.out.println("Filling in missing data...");
+        Ebean.execute(() -> OsnovnaSkola2016.finder.findEach(OsnovnaSkola2016::fillInNeupisani));
         return ok("Hopefully this worked");
     }
 
@@ -144,7 +155,8 @@ public class Index extends Controller {
         public final ArrayNode result;
         public final @MagicConstant int status;
 
-        private ParseResult(ArrayNode result, @MagicConstant int status) {
+        private ParseResult(ArrayNode result,
+                            @MagicConstant(intValues = {SUCCESS, PARTIAL_FAIL, TOTAL_FAIL}) int status) {
             this.result = result;
             this.status = status;
         }
@@ -171,7 +183,7 @@ public class Index extends Controller {
                     if (ac.isOk()) {
                         jsonAction.put("type", ac.getAction());
                         if (ac.getAction() == Parser.Action.DUMP) {
-                            Ucenik uc = Ucenik2016.finder.where().eq("sifra", Integer.parseInt(ac.getQuery())).findUnique(); //todo year-agnostic
+                            Ucenik uc = Ucenik2015.finder.where().eq("sifra", Integer.parseInt(ac.getQuery())).findUnique(); //todo year-agnostic
                             jsonAction.put("data", String.valueOf(uc));
                         } else {
                             PreparedStatement st = conn.prepareStatement(ac.getQuery());

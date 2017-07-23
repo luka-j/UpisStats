@@ -361,6 +361,10 @@ public class Parser {
                 case "skola.mesto":
                     result = "mesto";
                     break;
+                case "adresa":
+                case "skola.adresa":
+                    result = "adresa";
+                    break;
                 case "okrug":
                 case "skola.okrug":
                     result = "okrug";
@@ -384,8 +388,40 @@ public class Parser {
                 case "skola.ucenika":
                 case "ucenika":
                 case "ucenici.broj":
-                case "skola.ucenici.broj":
+                case "osnovna.upisanih":
                     result = "broj_ucenika";
+                    break;
+                case "skola.ucenika.ukupno":
+                case "osnovna.ucenika.ukupno":
+                    result = "broj_ucenika_ukupno";
+                    break;
+                case "skola.upisanih.procenat":
+                case "osnovna.upisanih.procenat":
+                    result = "procenat_upisanih";
+                    break;
+                case "6r.matematika.ukupno":
+                    result = "matematika6real";
+                    break;
+                case "7r.matematika.ukupno":
+                    result = "matematika7real";
+                    break;
+                case "8r.matematika.ukupno":
+                    result = "matematika8real";
+                    break;
+                case "6r.srpski.ukupno":
+                    result = "srpski6real";
+                    break;
+                case "7r.srpski.ukupno":
+                    result = "srpski7real";
+                    break;
+                case "8r.srpski.ukupno":
+                    result = "srpski8real";
+                    break;
+                case "prosek.matematika.ukupno":
+                    result = "matematika_preal";
+                    break;
+                case "prosek.srpski.ukupno":
+                    result = "srpski_preal";
                     break;
             }
 

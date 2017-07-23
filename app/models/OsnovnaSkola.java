@@ -18,6 +18,7 @@ public class OsnovnaSkola extends Model {
     public String ime;
     public String mesto;
     public String okrug;
+    public String adresa, telefon;
 
     public double likovno6, tehnicko6, geografija6, biologija6, sport6, drugiStrani6, matematika6, istorija6, engleski6, muzicko6, fizicko6, vladanje6, fizika6, srpski6;
     public double likovno7, tehnicko7, geografija7, biologija7, sport7, drugiStrani7, matematika7, istorija7, engleski7, muzicko7, fizicko7, vladanje7, fizika7, srpski7, hemija7;
