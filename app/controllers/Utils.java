@@ -1,5 +1,6 @@
 package controllers;
 
+import java.lang.reflect.Field;
 import java.util.regex.Pattern;
 
 /**
@@ -42,5 +43,15 @@ public class Utils {
 
     public static int randomInt(int min, int max) {
         return (int) Math.floor(Math.random() * (max - min) + min);
+    }
+
+    public static boolean containsNumericField(Field[] fields, String fieldName) {
+        for (Field field : fields) {
+            if (field.getName().equals(fieldName)
+                    && (field.getType().equals(int.class) || field.getType().equals(double.class))) {
+                return true;
+            }
+        }
+        return false;
     }
 }

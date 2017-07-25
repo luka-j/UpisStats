@@ -26,6 +26,7 @@ public class UceniciBase {
     }
 
     public static Stream<UcenikWrapper> svi() {
+        if(base.isEmpty()) load();
         return base.stream();
     }
 }

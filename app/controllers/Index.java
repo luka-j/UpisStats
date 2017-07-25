@@ -1,24 +1,18 @@
 package controllers;
 
 import akka.stream.ConnectionException;
-import com.avaje.ebean.Ebean;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.inject.Inject;
-import models.*;
+import models.CountMatrix;
+import models.Ucenik;
+import models.Ucenik2017;
 import org.intellij.lang.annotations.MagicConstant;
 import play.http.HttpEntity;
 import play.libs.Json;
 import play.mvc.Controller;
 import play.mvc.Result;
-import upismpn.obrada.OsnovneBase;
-import upismpn.obrada.SmeroviBase;
-import upismpn.obrada.UceniciGroup;
-import upismpn.obrada.UceniciGroupBuilder;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -26,21 +20,24 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 
+import static controllers.Init.INIT_PHASE;
+
 
 /**
  * Created by luka on 5.5.16..
  */
 public class Index extends Controller {
-    private static final boolean INIT_PHASE = true;
     private static final boolean DEBUG = false;
     private static final boolean LOG_QUERY_ERRORS = true;
+
     public static final int CURRENT_YEAR = 15;
+
 
     static Index instance; //well, shit
     //(need this for proper db injection)
     //todo fix mess
 
-    private static String errors = "";
+    protected static String errors = "";
 
     @Inject
     play.db.Database db;
@@ -49,83 +46,6 @@ public class Index extends Controller {
         errors += sifra + ", ";
     }
 
-    public Result populateDb() {
-        long start = System.currentTimeMillis();
-        if (!INIT_PHASE) return forbidden("Init phase over");
-        SmeroviBase.load();
-        UceniciGroup all = new UceniciGroupBuilder(null).getGroup();
-        System.out.println("Loaded everything; populating");
-        Ebean.execute(() -> all.forEach(Ucenik2015::create));
-        Ebean.execute(() -> all.forEach(Ucenik2015::populateZelje));
-        populateSchoolAverages();
-        System.out.println("Done");
-        long end = System.currentTimeMillis();
-        System.out.println("Time: " + ((end - start) / 1000) / 60.0 + "min");
-        return ok("Errors:\n" + errors);
-    }
-
-    private void populateAveragesInner(Object s, String columnName, long id) {
-        List<Ucenik2015> group = Ucenik2015.finder.where().eq(columnName, id).findList();
-        for (Method m : s.getClass().getMethods()) {
-            if (m.getName().startsWith("set") && m.getParameterTypes()[0].equals(double.class)) {
-                try {
-                    m.invoke(s, 1.0); //invoking setter in order to force populating fields from db
-                } catch (IllegalAccessException | InvocationTargetException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-        for (Field f : s.getClass().getFields()) {
-            if (f.getType().equals(double.class) && !f.getName().toLowerCase().endsWith("real") &&
-                    !f.getName().startsWith("procenat")) {
-                try {
-                    if (Ucenik2015.class.getField(f.getName()).getType().equals(int.class)) {
-                        f.setDouble(s, group.stream().mapToInt((Ucenik2015 uc) -> {
-                            try {
-                                return Ucenik2015.class.getField(f.getName()).getInt(uc);
-                            } catch (IllegalAccessException | NoSuchFieldException e) {
-                                throw new RuntimeException(e);
-                            }
-                        }).average().getAsDouble());
-                    } else {
-                        f.setDouble(s, group.stream().mapToDouble((Ucenik2015 uc) -> {
-                            try {
-                                return Ucenik2015.class.getField(f.getName()).getDouble(uc);
-                            } catch (IllegalAccessException | NoSuchFieldException e) {
-                                throw new RuntimeException(e);
-                            }
-                        }).average().getAsDouble());
-                    }
-                } catch (NoSuchFieldException | IllegalAccessException e) {
-                    System.err.println("Invalid field " + f.getName());
-                    throw new RuntimeException(e);
-                }
-            }
-        }
-    }
-
-    public Result populateSchoolAverages() {
-        if (!INIT_PHASE) return forbidden("Init phase over");
-        Ebean.execute(() -> {
-            Smer2015.finder.findEach((Smer2015 s) -> {
-                populateAveragesInner(s, "upisana_id", s.id);
-                s.save();
-            });
-            OsnovnaSkola2015.finder.findEach((OsnovnaSkola2015 s) -> {
-                populateAveragesInner(s, "osnovna_id", s.id);
-                s.save();
-            });
-        });
-        return ok("Done");
-    }
-
-    public Result fillInNeupisani() {
-        if (!INIT_PHASE) return forbidden("Init phase over");
-        OsnovneBase.load();
-        System.out.println("Filling in missing data...");
-        Ebean.execute(() -> OsnovnaSkola2016.finder.findEach(OsnovnaSkola2016::fillInNeupisani));
-        return ok("Hopefully this worked");
-    }
 
     public Result getData(String query) {
         if (INIT_PHASE) return new Result(503, HttpEntity.fromString("Ažuriranje podataka je u toku...\n" +
@@ -183,7 +103,7 @@ public class Index extends Controller {
                     if (ac.isOk()) {
                         jsonAction.put("type", ac.getAction());
                         if (ac.getAction() == Parser.Action.DUMP) {
-                            Ucenik uc = Ucenik2015.finder.where().eq("sifra", Integer.parseInt(ac.getQuery())).findUnique(); //todo year-agnostic
+                            Ucenik uc = Ucenik2017.finder.where().eq("sifra", Integer.parseInt(ac.getQuery())).findUnique(); //todo year-agnostic
                             jsonAction.put("data", String.valueOf(uc));
                         } else {
                             PreparedStatement st = conn.prepareStatement(ac.getQuery());

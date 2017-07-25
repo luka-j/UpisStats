@@ -17,6 +17,7 @@ import java.util.stream.Collectors;
 public class Ucenik2016 extends Ucenik {
 
     public static Finder<Long, Ucenik2016> finder = new Model.Finder<>(Ucenik2016.class);
+
     @ManyToOne(cascade = CascadeType.ALL)
     public models.OsnovnaSkola2016 osnovna;
     @ManyToOne(cascade = CascadeType.ALL)

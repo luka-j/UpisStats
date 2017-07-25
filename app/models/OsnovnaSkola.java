@@ -13,6 +13,9 @@ public class OsnovnaSkola extends Model {
     @Id
     public long id;
 
+    /**
+     * Ucenici koji su upisali srednju skolu
+     */
     public int brojUcenika;
 
     public String ime;
