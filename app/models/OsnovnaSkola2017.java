@@ -23,7 +23,11 @@ public class OsnovnaSkola2017 extends OsnovnaSkola {
         OsnovnaSkola2017 os = finder.byId((long)skola.id);
         if (os == null) {
             os = new OsnovnaSkola2017();
-            OsnovnaSkola.create(os, skola.naziv, skola.sediste, skola.okrug);
+            os.id = skola.id;
+            os.ime = CharUtils.stripAll(skola.naziv);
+            os.mesto = CharUtils.stripAll(skola.sediste);
+            os.okrug = CharUtils.stripAll(skola.okrug);
+            os.brojUcenika = 0;
             os.opstina = CharUtils.stripAll(skola.opstina);
             os.ukupnoUcenika = skola.brojUcenika;
             os.svrsenihUcenika = skola.ucenikaZavrsilo;
@@ -41,11 +45,13 @@ public class OsnovnaSkola2017 extends OsnovnaSkola {
             os.sviBodovaOcene = skola.bodovaOcene;
             os.sviProsekUkupno = skola.prosecnaOcena;
 
-            os.update();
-            return os;
+            os.save();
         }
-        os.brojUcenika++;
-        os.update();
         return os;
+    }
+
+    public void addUcenik() {
+        brojUcenika++;
+        update();
     }
 }

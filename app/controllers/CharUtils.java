@@ -38,11 +38,7 @@ public class CharUtils {
         toLatin.put('ћ', "ć");
         toLatin.put('ж', "ž");
         toLatin.put('џ', "dž");
-        toLatin.put('ц', "c"); To force a variable to be evaluated as a certain type, see the section on Type casting. To change the type of a variable, see the settype() function.
-
-To test any of the examples in this section, use the var_dump() function.
-
-
+        toLatin.put('ц', "c");
         toLatin.put('в', "v");
         toLatin.put('б', "b");
         toLatin.put('н', "n");

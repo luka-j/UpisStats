@@ -3,6 +3,7 @@ package upis17.data;
 import upis17.download.Smer2017;
 import upis17.download.Smerovi2017;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -26,5 +27,9 @@ public class SmeroviBase {
     public static SmerWrapper get(String sifra) {
         if(base.containsKey(sifra)) return base.get(sifra);
         throw new IllegalArgumentException(sifra);
+    }
+
+    public static Collection<SmerWrapper> getAll() {
+        return base.values();
     }
 }

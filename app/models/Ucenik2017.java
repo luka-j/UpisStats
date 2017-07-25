@@ -16,18 +16,21 @@ public class Ucenik2017 extends Ucenik {
     public static Finder<Long, Ucenik2017> finder = new Model.Finder<>(Ucenik2017.class);
 
     @ManyToOne(cascade = CascadeType.ALL)
-    public models.OsnovnaSkola2017 osnovna;
+    public OsnovnaSkola2017 osnovna;
     @ManyToOne(cascade = CascadeType.ALL)
     public Smer2017 upisana;
     @OneToMany(mappedBy = "ucenik")
     public List<Zelja2017> listaZelja1 = new ArrayList<>();
     @OneToMany(mappedBy = "ucenik")
     public List<Zelja2017> listaZelja2 = new ArrayList<>();
+    @OneToMany(mappedBy = "ucenik")
+    public List<Prijemni2017> prijemni = new ArrayList<>();
     @OneToOne(mappedBy = "ucenik")
-    public Takmicenje2017 takmcenje;
+    public Takmicenje2017 takmicenje;
 
 
-    public double drugiMaternji6, drugiMaternji7, drugiMaternji8, drugiMaternjiP;
+    public int drugiMaternji6, drugiMaternji7, drugiMaternji8;
+    public double drugiMaternjiP;
 
     public static Ucenik2017 create(UcenikWrapper from) {
         Ucenik2017 uc = new Ucenik2017();
@@ -56,17 +59,23 @@ public class Ucenik2017 extends Ucenik {
             populateGrades(from.osmiRaz.ocene, uc, 8);
             Ucenik.populateAverages(uc);
         } catch (NoSuchFieldException | IllegalAccessException e) {
-            System.err.println("Exception while populating: invalid field(s) for uc" + uc.sifra);
+            System.err.println("Exception while populating: invalid field(s) for uc" + uc.sifra + ": " + e.getMessage());
             Index.errors(uc.sifra);
             return null;
         }
 
+        uc.save(); //fun fact: this assigns null to lists
+
         uc.osnovna = OsnovnaSkola2017.finder.byId((long) from.osnovna.id);
         uc.upisana = Smer2017.find(from.smer.sifra);
-        uc.listaZelja1.addAll(from.listaZelja1.stream().map(z -> Zelja2017.create(uc, z.smer.sifra, z.uslov)).collect(Collectors.toList()));
-        uc.listaZelja2.addAll(from.listaZelja2.stream().map(z -> Zelja2017.create(uc, z.smer.sifra, z.uslov)).collect(Collectors.toList()));
-        if(from.takmicenje != null) uc.takmcenje = Takmicenje2017.create(uc, from.takmicenje);
+        uc.osnovna.addUcenik();
+        uc.upisana.addUcenik();
+        uc.listaZelja1=(from.listaZelja1.stream().map(z -> Zelja2017.create(uc, z.smer.sifra, z.uslov)).collect(Collectors.toList()));
+        uc.listaZelja2=(from.listaZelja2.stream().map(z -> Zelja2017.create(uc, z.smer.sifra, z.uslov)).collect(Collectors.toList()));
+        uc.prijemni=(from.prijemni.entrySet().stream().map(e -> Prijemni2017.create(uc, e.getKey(), e.getValue())).collect(Collectors.toList()));
+        if(from.takmicenje != null) uc.takmicenje = Takmicenje2017.create(uc, from.takmicenje);
 
+        uc.update();
         return uc;
     }
 
@@ -76,6 +85,7 @@ public class Ucenik2017 extends Ucenik {
         for (Map.Entry<String, Integer> e : from.entrySet()) {
             switch (e.getKey()) {
                 case "izbornisport":
+                case "izborniSport":
                     c.getField("sport" + raz).setInt(to, e.getValue());
                     break;
                 case "prviStrani":

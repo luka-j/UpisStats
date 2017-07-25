@@ -19,22 +19,31 @@ public class Smer2017 extends Smer {
 
     public static Smer2017 create(SmerWrapper smer) {
         String sifra = CharUtils.stripAll(smer.sifra);
-        Smer2017 res = find(sifra);
-        if (res == null) {
-            Smer2017 s = new Smer2017();
-            Smer.create(s, sifra, smer.skola, smer.opstina, smer.okrug, smer.smer, smer.podrucje, smer.kvota);
+        Smer2017 s = find(sifra);
+        if (s == null) {
+            s = new Smer2017();
+            s.sifra = sifra;
+            s.ime = CharUtils.stripAll(smer.skola);
+            s.mesto = CharUtils.stripAll(smer.opstina);
+            s.okrug = CharUtils.stripAll(smer.okrug);
+            s.smer = CharUtils.stripAll(smer.smer);
+            s.podrucje = CharUtils.stripAll(smer.podrucje);
+            s.kvota = smer.kvota;
+            s.brojUcenika = 0;
             s.jezik = CharUtils.stripAll(smer.jezik);
             s.trajanje = smer.trajanje;
             s.kvotaUmanjenje = smer.kvotaUmanjenje;
-            s.update();
-            return s;
+            s.save();
         }
-        res.brojUcenika++;
-        res.update();
-        return res;
+        return s;
     }
 
     public static Smer2017 find(String sifra) {
         return finder.where().eq("sifra", sifra).findUnique();
+    }
+
+    public void addUcenik() {
+        brojUcenika++;
+        update();
     }
 }

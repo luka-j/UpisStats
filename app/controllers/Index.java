@@ -30,7 +30,7 @@ public class Index extends Controller {
     private static final boolean DEBUG = false;
     private static final boolean LOG_QUERY_ERRORS = true;
 
-    public static final int CURRENT_YEAR = 15;
+    public static final int CURRENT_YEAR = 17;
 
 
     static Index instance; //well, shit
@@ -193,8 +193,6 @@ public class Index extends Controller {
     public Result hw() {
         if (instance == null) instance = this;
         return redirect("/query");
-        //return populateSchoolAverages();
-        //return ok("Hello world");
     }
 
     public Result query(String initialQuery) {

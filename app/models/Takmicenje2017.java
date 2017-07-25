@@ -5,8 +5,10 @@ import upis17.data.UcenikWrapper;
 
 import javax.persistence.Entity;
 import javax.persistence.OneToOne;
+import javax.persistence.Table;
 
 @Entity
+@Table(name="takmicenja2017")
 public class Takmicenje2017 extends Takmicenje {
     @OneToOne
     public Ucenik2017 ucenik;

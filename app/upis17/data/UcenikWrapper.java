@@ -133,7 +133,7 @@ public class UcenikWrapper {
             String[] info = predmet.split("~");
             this.predmet = info[0];
             this.bodova = bodova;
-            if(info[1].toLowerCase().startsWith("republičko")) nivo = REPUBLICKO;
+            if(info[1].split(",")[0].toLowerCase().startsWith("republičko")) nivo = REPUBLICKO;
             else nivo = MEĐUNARODNO; //cini mi se da ovakvih nema u '17
             switch (info[2].toLowerCase()) {
                 case "prvo mesto": mesto = 1; break;

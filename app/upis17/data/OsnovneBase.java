@@ -4,6 +4,7 @@ import upis17.Locations;
 import upis17.download.Osnovna2017;
 
 import java.io.File;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,5 +30,9 @@ public class OsnovneBase {
     public static OsnovnaWrapper get(int id) {
         if(!base.containsKey(id)) throw new IllegalArgumentException(String.valueOf(id));
         return base.get(id);
+    }
+
+    public static Collection<OsnovnaWrapper> getAll() {
+        return base.values();
     }
 }

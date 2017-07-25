@@ -49,9 +49,9 @@ Metode, redom:
    
   
 ### Podaci
-Podaci su preuzeti sa sajta za upis MPN prošle godine koristeći [scrapper](https://github.com/luq-0/Upis15Crawler), i biti će preuzeti ponovo kad bude objavljen raspored po školama, za ovu godinu. Unutar ovog projekta se nalazi manja verzija istog scrappera (bez nekih delova za output), u pakovanju `upismpn`.
+Podaci su preuzeti sa sajta za upis MPN koristeći [scrapper](https://github.com/luq-0/Upis15Crawler). Unutar ovog projekta se nalazi manja verzija starog scrappera za 2015. i 2016. godinu (bez nekih delova za output), u pakovanju `upismpn`, kao i deo koji učitava podatke za upis 2017. u pakovanju `upis17`.
 
-Izlaz tog scrappera je transformisan u bazu (v. controllers.Index#populateDb), čiji se kompresovan dump nalazi na [Dropboxu](https://www.dropbox.com/s/9dhp48bgy8p16vz/upisdb060217.tar.xz?dl=0). U pitanju je PostgreSQL baza i potrebno je prvo ekstraktovati tar fajl iz dumpa, zatim učitati podatke koristeći `pg_restore`. Nazivi kolona i njihovo objašnjenje su dati u prethodnom odeljku (između prve i druge, odnosno posle druge, crtice).
+Izlaz tog scrappera je transformisan u bazu (v. controllers.Init#populateDb i controllers.Init#populateDb2017), čiji se kompresovan dump nalazi na [Dropboxu](https://www.dropbox.com/s/gwjx3439olmk3no/upisdb250717?dl=0). U pitanju je dump PostgreSQL baze u custom formatu koji se može učitati koristeći `pg_restore`. Nazivi kolona i njihovo objašnjenje su dati u prethodnom odeljku (između prve i druge, odnosno posle druge, crtice).
 
 Svaka tabela ima svoju klasu. Svaka godina ima svoju tabelu. Klase bez godina su obeležene kao `@MappedSupperclass` i u njima se nalaze sva primitivna polja koja nasleđuju `@Entity`-ji.
 

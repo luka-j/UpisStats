@@ -1,9 +1,11 @@
 package upis17;
 
+import controllers.Index;
+
 import java.io.File;
 
 public class Locations {
-    public static final int YEAR = 17;
+    public static final int YEAR = Index.CURRENT_YEAR;
 
     public static final File DATA_FOLDER = System.getProperty("os.name").toLowerCase().contains("nix")
             || System.getProperty("os.name").toLowerCase().contains("nux") ?

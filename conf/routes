@@ -4,9 +4,11 @@
 
 # Home page
 GET        /                         controllers.Index.hw
-GET        /populate                 controllers.Index.populateDb
-GET        /avgs                     controllers.Index.populateSchoolAverages
-GET        /neupisani                controllers.Index.fillInNeupisani
+GET        /populate                 controllers.Init.populateDb
+GET        /populate/current         controllers.Init.populateDb2017()
+GET        /populate/skole           controllers.Init.setSkole
+GET        /avgs                     controllers.Init.populateSchoolAverages
+GET        /neupisani                controllers.Init.fillInNeupisani
 GET        /get                      controllers.Index.getData(q: String)
 GET        /query                    controllers.Index.query(initial: String?="")
 GET        /examples/random          controllers.Examples.randomExample
