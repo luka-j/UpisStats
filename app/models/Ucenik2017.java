@@ -1,8 +1,9 @@
 package models;
 
 import com.avaje.ebean.Model;
+import controllers.CharUtils;
 import controllers.Index;
-import upis17.data.UcenikWrapper;
+import upismpn.obrada2017.UcenikW;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -11,6 +12,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @Entity
+@Table(name = "ucenici2017")
 public class Ucenik2017 extends Ucenik {
 
     public static Finder<Long, Ucenik2017> finder = new Model.Finder<>(Ucenik2017.class);
@@ -31,8 +33,15 @@ public class Ucenik2017 extends Ucenik {
 
     public int drugiMaternji6, drugiMaternji7, drugiMaternji8;
     public double drugiMaternjiP;
+    public double najboljiBlizanacBodovi;
+    public int blizanacSifra;
+    @Column(name = "bodova_am")
+    public double bodovaAM;
+    public String maternjiJezik, prviStraniJezik;
+    public boolean vukovaDiploma, prioritet;
 
-    public static Ucenik2017 create(UcenikWrapper from) {
+    public static Ucenik2017 create(UcenikW from) {
+        //System.out.println("Loading " + from.sifra);
         Ucenik2017 uc = new Ucenik2017();
         uc.sifra = from.sifra;
         uc.prosekSesti = from.sestiRaz.prosekOcena;
@@ -64,14 +73,22 @@ public class Ucenik2017 extends Ucenik {
             return null;
         }
 
+        uc.najboljiBlizanacBodovi = from.najboljiBlizanacBodovi;
+        uc.blizanacSifra = from.blizanacSifra;
+        uc.bodovaAM = from.bodovaAM;
+        uc.maternjiJezik = CharUtils.stripAll(from.maternji);
+        uc.prviStraniJezik = CharUtils.stripAll(from.prviStrani);
+        uc.vukovaDiploma = from.vukovaDiploma;
+        uc.prioritet = from.prioritet;
+
         uc.save(); //fun fact: this assigns null to lists
 
         uc.osnovna = OsnovnaSkola2017.finder.byId((long) from.osnovna.id);
         uc.upisana = Smer2017.find(from.smer.sifra);
         uc.osnovna.addUcenik();
         uc.upisana.addUcenik();
-        uc.listaZelja1=(from.listaZelja1.stream().map(z -> Zelja2017.create(uc, z.smer.sifra, z.uslov)).collect(Collectors.toList()));
-        uc.listaZelja2=(from.listaZelja2.stream().map(z -> Zelja2017.create(uc, z.smer.sifra, z.uslov)).collect(Collectors.toList()));
+        uc.listaZelja1=(from.listaZelja1.stream().map(z -> Zelja2017.create(uc, z.smer.sifra, z.uslov, z.bodovaZaUpis)).collect(Collectors.toList()));
+        uc.listaZelja2=(from.listaZelja2.stream().map(z -> Zelja2017.create(uc, z.smer.sifra, z.uslov, z.bodovaZaUpis)).collect(Collectors.toList()));
         uc.prijemni=(from.prijemni.entrySet().stream().map(e -> Prijemni2017.create(uc, e.getKey(), e.getValue())).collect(Collectors.toList()));
         if(from.takmicenje != null) uc.takmicenje = Takmicenje2017.create(uc, from.takmicenje);
 

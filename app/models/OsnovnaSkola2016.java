@@ -2,9 +2,9 @@ package models;
 
 import com.avaje.ebean.Model;
 import controllers.CharUtils;
+import models.utils.Osnovna;
+import models.utils.OsnovneBase;
 import org.jetbrains.annotations.NotNull;
-import upismpn.obrada.Osnovna;
-import upismpn.obrada.OsnovneBase;
 
 import javax.persistence.Entity;
 import javax.persistence.Table;

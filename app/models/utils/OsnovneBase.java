@@ -1,7 +1,7 @@
-package upismpn.obrada;
+package models.utils;
 
 import controllers.CharUtils;
-import upismpn.download.UceniciManager;
+import upismpn.download.DownloadController;
 
 import java.io.File;
 import java.io.IOException;
@@ -20,7 +20,7 @@ public class OsnovneBase {
 
     public static void load() {
         base = new HashMap<>();
-        File f = new File(UceniciManager.DATA_FOLDER, "osnovne");
+        File f = new File(DownloadController.DATA_FOLDER, "osnovne");
         try {
             String text = new String(Files.readAllBytes(f.toPath()), StandardCharsets.UTF_8);
             String[] osnovne = text.split("\\n\\$\\n");
@@ -38,6 +38,7 @@ public class OsnovneBase {
     }
 
     public static List<Osnovna> getOsnovne(String ime, String okrug) {
+        if(base.isEmpty()) load();
         return base.get(ime + "+" + okrug);
     }
 }

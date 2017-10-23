@@ -20,12 +20,14 @@ public class Zelja2017 extends Model {
     public Ucenik2017 ucenik;
 
     public boolean ispunioUslov;
+    public double bodovaZaUpis;
 
-    public static Zelja2017 create(Ucenik2017 uc, String sifraSmera, boolean uslov) {
+    public static Zelja2017 create(Ucenik2017 uc, String sifraSmera, boolean uslov, double bodovaZaUpis) {
         Zelja2017 z = new Zelja2017();
         z.smer = Smer2017.find(sifraSmera);
         z.ucenik = uc;
         z.ispunioUslov = uslov;
+        z.bodovaZaUpis = bodovaZaUpis;
         z.save();
         return z;
     }

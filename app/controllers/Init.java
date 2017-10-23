@@ -6,12 +6,12 @@ import com.google.inject.Inject;
 import models.*;
 import play.mvc.Controller;
 import play.mvc.Result;
-import upis17.data.UceniciBase;
-import upis17.data.UcenikWrapper;
-import upismpn.obrada.OsnovneBase;
 import upismpn.obrada.SmeroviBase;
 import upismpn.obrada.UceniciGroup;
 import upismpn.obrada.UceniciGroupBuilder;
+import upismpn.obrada2017.OsnovneBase;
+import upismpn.obrada2017.UceniciBase;
+import upismpn.obrada2017.UcenikW;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -22,9 +22,10 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class Init extends Controller {
-    public static final boolean INIT_PHASE = false;
+    public static final boolean INIT_PHASE = true;
 
 
     @Inject play.db.Database db;
@@ -53,10 +54,17 @@ public class Init extends Controller {
     public Result populateDb2017() {
         long start = System.currentTimeMillis();
         if(!INIT_PHASE) return forbidden("Init phase over");
+        System.out.println("Starting population");
         UceniciBase.load();
-        Ebean.execute(() -> upis17.data.OsnovneBase.getAll().forEach(OsnovnaSkola2017::create));
-        Ebean.execute(() -> upis17.data.SmeroviBase.getAll().forEach(Smer2017::create));
-        Ebean.execute(() -> UceniciBase.svi().forEach(Ucenik2017::create));
+        System.out.println("Loaded data");
+        Ebean.execute(() -> upismpn.obrada2017.OsnovneBase.getAll().forEach(OsnovnaSkola2017::create));
+        System.out.println("Loaded osnovne");
+        Ebean.execute(() -> upismpn.obrada2017.SmeroviBase.getAll().forEach(Smer2017::create));
+        System.out.println("Loaded smerovi");
+        Stream<UcenikW> svi = UceniciBase.svi();
+        System.out.println("Loading ucenici...");
+        Ebean.execute(() -> svi.forEach(Ucenik2017::create));
+        System.out.println("Loaded ucenici. Populating averages.");
 
         Ebean.execute(this::populateSchoolAverages);
         System.out.println("Done");
@@ -67,19 +75,22 @@ public class Init extends Controller {
 
     //for some reason Ucenik2017 refuses to load school ids correctly, so this method is assigning them manually
     public Result setSkole() {
-        List<upis17.data.UcenikWrapper> ucenici = UceniciBase.svi().collect(Collectors.toList());
+        System.out.println("Setting skole...");
+        UceniciBase.load();
+        List<UcenikW> ucenici = UceniciBase.svi().collect(Collectors.toList());
 
         Connection conn = db.getConnection();
         try {
-            PreparedStatement stmt = conn.prepareStatement("update ucenik2017 set osnovna_id=?, upisana_id=? where sifra=?");
+            PreparedStatement stmt = conn.prepareStatement("update ucenici2017 set osnovna_id=?, upisana_id=? where sifra=?");
             conn.setAutoCommit(false);
-            for(UcenikWrapper uc : ucenici) {
+            for(UcenikW uc : ucenici) {
                 stmt.setLong(1, uc.osnovna.id);
                 stmt.setLong(2, Smer2017.find(CharUtils.stripAll(uc.smer.sifra)).id);
                 stmt.setLong(3, uc.sifra);
                 stmt.execute();
             }
             conn.commit();
+            System.out.println("Done");
         } catch (SQLException e) {
             e.printStackTrace();
             try {

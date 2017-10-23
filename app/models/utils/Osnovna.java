@@ -1,10 +1,5 @@
-package upismpn.obrada;
+package models.utils;
 
-
-
-/**
- * Created by luka on 2.4.17..
- */
 public class Osnovna {
     final String ime;
     String mesto;

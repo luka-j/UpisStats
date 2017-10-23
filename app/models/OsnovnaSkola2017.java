@@ -2,7 +2,7 @@ package models;
 
 import com.avaje.ebean.Model;
 import controllers.CharUtils;
-import upis17.data.OsnovnaWrapper;
+import upismpn.obrada2017.OsnovnaW;
 
 import javax.persistence.Entity;
 import javax.persistence.Table;
@@ -19,7 +19,7 @@ public class OsnovnaSkola2017 extends OsnovnaSkola {
 
     public double drugiMaternji6, drugiMaternji7, drugiMaternji8, drugiMaternjiP;
 
-    public static OsnovnaSkola2017 create(OsnovnaWrapper skola) {
+    public static OsnovnaSkola2017 create(OsnovnaW skola) {
         OsnovnaSkola2017 os = finder.byId((long)skola.id);
         if (os == null) {
             os = new OsnovnaSkola2017();
