@@ -33,14 +33,10 @@ public class Index extends Controller {
     public static final int CURRENT_YEAR = 17;
 
 
-    static Index instance; //well, shit
-    //(need this for proper db injection)
-    //todo fix mess
-
     protected static String errors = "";
 
     @Inject
-    play.db.Database db;
+    private play.db.Database db;
 
     public static void errors(int sifra) {
         errors += sifra + ", ";
@@ -191,12 +187,10 @@ public class Index extends Controller {
     }
 
     public Result hw() {
-        if (instance == null) instance = this;
         return redirect("/query");
     }
 
     public Result query(String initialQuery) {
-        if (instance == null) instance = this;
         if (INIT_PHASE) return new Result(503, HttpEntity.fromString("Ažuriranje podataka je u toku...\n" +
                 "Probajte ponovo za par minuta", "UTF-8"));
         return ok(views.html.query.render(initialQuery));

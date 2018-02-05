@@ -25,10 +25,11 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class Init extends Controller {
-    public static final boolean INIT_PHASE = true;
+    public static final boolean INIT_PHASE = false;
 
 
-    @Inject play.db.Database db;
+    @Inject
+    private play.db.Database db;
 
     private static final Class<? extends Ucenik> currentUcenik = Ucenik2017.class;
     private static final Field[] ucenikFields = currentUcenik.getFields();
@@ -42,8 +43,8 @@ public class Init extends Controller {
         SmeroviBase.load();
         UceniciGroup all = new UceniciGroupBuilder(null).getGroup();
         System.out.println("Loaded everything; populating");
-        Ebean.execute(() -> all.forEach(Ucenik2015::create));
-        Ebean.execute(() -> all.forEach(Ucenik2015::populateZelje));
+        Ebean.execute(() -> all.forEach(Ucenik2016::create));
+        Ebean.execute(() -> all.forEach(Ucenik2016::populateZelje));
         populateSchoolAverages();
         System.out.println("Done");
         long end = System.currentTimeMillis();

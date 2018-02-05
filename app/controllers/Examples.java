@@ -3,6 +3,7 @@ package controllers;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.google.inject.Inject;
 import play.libs.Json;
 import play.mvc.Controller;
 import play.mvc.Result;
@@ -11,9 +12,12 @@ import play.mvc.Result;
  * Created by luka on 27.6.16..
  */
 public class Examples extends Controller {
-    private static final ExampleQuery[] examples = new ExampleQuery[7];
 
-    static {
+    @Inject private Index index;
+
+    private final ExampleQuery[] examples = new ExampleQuery[7];
+
+    {
         examples[0] = new ExampleQuery("x:zaokruzi#1.prosek.srpski, y:zaokruzi#1.prosek.matematika\n" +
                 "crtaj zuto: osnovna prosek.ukupno<3.5 ili bodovi.zavrsni<20\n" +
                 "crtaj #ee99ee: smer kvota<60\n" +
@@ -94,7 +98,7 @@ public class Examples extends Controller {
         return ok(examples[0].toString()).as("application/json");
     }
 
-    private static class ExampleQuery {
+    private class ExampleQuery {
         private String query;
         private JsonNode result;
 
@@ -104,7 +108,7 @@ public class Examples extends Controller {
 
         public JsonNode getResult() {
             if (result == null) {
-                result = Index.instance.parseQuery(query).result;
+                result = index.parseQuery(query).result;
             }
             return result;
         }
