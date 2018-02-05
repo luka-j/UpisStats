@@ -6,8 +6,16 @@ Plotuje statistiku podataka s upisa u srednje škole
 Demo: ![Example](http://i.imgur.com/RXxeoiC.png)
 
 ### Ideja
-Query language koji će biti razumljiv i na srpskom (postoje engleski oblici za neke komande) i koji će biti dovoljno sličan SQLu tako da mogu da ga prevedem i izvršim bez mnogo muke. "Srce" svega je controllers.Parser koji zapravo radi to prevođenje, i vraća Listu Action-a koje u sebi sadrže tip upita, SQL query i broj osa i njihova imena, uz boju ako je tip upita PLOT.
+Query language koji će biti razumljiv i na srpskom (postoje engleski oblici za neke komande) i koji će biti jednostavan i dovoljno sličan SQLu tako da mogu da ga prevedem i izvršim bez mnogo muke. Parsiranje vrši controllers.Parser koji vraća Listu Action-a koje u sebi sadrže tip upita, SQL query i broj osa i njihova imena, uz boju ako je tip upita PLOT.
 
+### Podaci
+Podaci su preuzeti sa sajta za upis MPN koristeći [scraper](https://github.com/luq-0/UpisScrapper). Ovaj projekat uključuje Scraper kao biblioteku i koristi ga za učitavanje fajlova.
+
+Izlaz tog scrappera je transformisan u bazu (v. controllers.Init#populateDb i controllers.Init#populateDb2017), čiji se kompresovan dump nalazi na [Dropboxu](https://www.dropbox.com/s/gwjx3439olmk3no/upisdb250717?dl=0) (stari dump). U pitanju je dump PostgreSQL baze u custom formatu koji se može učitati koristeći `pg_restore`. Nazivi kolona i njihovo objašnjenje su dati u prethodnom odeljku (između prve i druge, odnosno posle druge, crtice).
+
+Svaka tabela ima svoju klasu. Svaka godina ima svoju tabelu. Klase bez godina su obeležene kao `@MappedSupperclass` i u njima se nalaze sva primitivna polja koja nasleđuju `@Entity`-ji.
+
+Konfiguracija za konektovanje na bazu se nalazi u `conf/application.conf`. Za više informacija, videti dokumentaciju za Play! Framework.
 
 ### Parsiranje
 Metode, redom:
@@ -47,13 +55,6 @@ Metode, redom:
   - {8r/7r/6r}.{predmet} - {predmet}{razred} - ocena iz nekog predmeta u nekom razredu
   - prosek.{predmet} - {predmet}_p - prosek ocena iz nekog predmeta u sva tri razreda. Predmeti su: srpski, matematika, fizika, hemija (za 7r i 8r), engleski, drugiStrani, geografija, biologija, istorija, likovno, tehnicko, muzicko, fizicko, sport, vladanje
    
-  
-### Podaci
-Podaci su preuzeti sa sajta za upis MPN koristeći [scrapper](https://github.com/luq-0/Upis15Crawler). Unutar ovog projekta se nalazi manja verzija starog scrappera za 2015. i 2016. godinu (bez nekih delova za output), u pakovanju `upismpn`, kao i deo koji učitava podatke za upis 2017. u pakovanju `upis17`.
-
-Izlaz tog scrappera je transformisan u bazu (v. controllers.Init#populateDb i controllers.Init#populateDb2017), čiji se kompresovan dump nalazi na [Dropboxu](https://www.dropbox.com/s/gwjx3439olmk3no/upisdb250717?dl=0). U pitanju je dump PostgreSQL baze u custom formatu koji se može učitati koristeći `pg_restore`. Nazivi kolona i njihovo objašnjenje su dati u prethodnom odeljku (između prve i druge, odnosno posle druge, crtice).
-
-Svaka tabela ima svoju klasu. Svaka godina ima svoju tabelu. Klase bez godina su obeležene kao `@MappedSupperclass` i u njima se nalaze sva primitivna polja koja nasleđuju `@Entity`-ji.
 
 ### TO-DO
 Videti issues
