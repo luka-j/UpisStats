@@ -3,7 +3,7 @@ package models;
 import com.avaje.ebean.Model;
 import controllers.CharUtils;
 import controllers.Index;
-import upismpn.obrada2017.UcenikW;
+import rs.lukaj.upisstats.scraper.obrada2017.UcenikW;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -84,7 +84,7 @@ public class Ucenik2017 extends Ucenik {
         uc.save(); //fun fact: this assigns null to lists
 
         uc.osnovna = OsnovnaSkola2017.finder.byId((long) from.osnovna.id);
-        uc.upisana = Smer2017.find(from.smer.sifra);
+        uc.upisana = Smer2017.find(CharUtils.stripAll(from.smer.sifra));
         uc.osnovna.addUcenik();
         uc.upisana.addUcenik();
         uc.listaZelja1=(from.listaZelja1.stream().map(z -> Zelja2017.create(uc, z.smer.sifra, z.uslov, z.bodovaZaUpis)).collect(Collectors.toList()));

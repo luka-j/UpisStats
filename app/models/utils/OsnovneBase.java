@@ -1,7 +1,7 @@
 package models.utils;
 
 import controllers.CharUtils;
-import upismpn.download.DownloadController;
+import rs.lukaj.upisstats.scraper.download.DownloadController;
 
 import java.io.File;
 import java.io.IOException;

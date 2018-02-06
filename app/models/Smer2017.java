@@ -2,7 +2,7 @@ package models;
 
 import com.avaje.ebean.Model;
 import controllers.CharUtils;
-import upismpn.obrada2017.SmerW;
+import rs.lukaj.upisstats.scraper.obrada2017.SmerW;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;

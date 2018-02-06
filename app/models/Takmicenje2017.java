@@ -1,7 +1,7 @@
 package models;
 
 import org.jetbrains.annotations.Contract;
-import upismpn.obrada2017.UcenikW;
+import rs.lukaj.upisstats.scraper.obrada2017.UcenikW;
 
 import javax.persistence.Entity;
 import javax.persistence.OneToOne;

@@ -30,8 +30,6 @@ public class Index extends Controller {
     private static final boolean DEBUG = false;
     private static final boolean LOG_QUERY_ERRORS = true;
 
-    public static final int CURRENT_YEAR = 17;
-
 
     protected static String errors = "";
 

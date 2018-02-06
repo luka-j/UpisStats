@@ -3,7 +3,7 @@ package models;
 import com.avaje.ebean.Model;
 import controllers.CharUtils;
 import controllers.Index;
-import upismpn.obrada.UcenikWrapper;
+import rs.lukaj.upisstats.scraper.obrada.UcenikWrapper;
 
 import javax.persistence.Column;
 import javax.persistence.Id;

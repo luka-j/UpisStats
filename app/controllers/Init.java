@@ -6,12 +6,12 @@ import com.google.inject.Inject;
 import models.*;
 import play.mvc.Controller;
 import play.mvc.Result;
-import upismpn.obrada.SmeroviBase;
-import upismpn.obrada.UceniciGroup;
-import upismpn.obrada.UceniciGroupBuilder;
-import upismpn.obrada2017.OsnovneBase;
-import upismpn.obrada2017.UceniciBase;
-import upismpn.obrada2017.UcenikW;
+import rs.lukaj.upisstats.scraper.obrada.SmeroviBase;
+import rs.lukaj.upisstats.scraper.obrada.UceniciGroup;
+import rs.lukaj.upisstats.scraper.obrada.UceniciGroupBuilder;
+import rs.lukaj.upisstats.scraper.obrada2017.OsnovneBase;
+import rs.lukaj.upisstats.scraper.obrada2017.UceniciBase;
+import rs.lukaj.upisstats.scraper.obrada2017.UcenikW;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class Init extends Controller {
-    public static final boolean INIT_PHASE = false;
+    public static final boolean INIT_PHASE = true;
 
 
     @Inject
@@ -58,16 +58,17 @@ public class Init extends Controller {
         System.out.println("Starting population");
         UceniciBase.load();
         System.out.println("Loaded data");
-        Ebean.execute(() -> upismpn.obrada2017.OsnovneBase.getAll().forEach(OsnovnaSkola2017::create));
+        Ebean.execute(() -> rs.lukaj.upisstats.scraper.obrada2017.OsnovneBase.getAll().forEach(OsnovnaSkola2017::create));
         System.out.println("Loaded osnovne");
-        Ebean.execute(() -> upismpn.obrada2017.SmeroviBase.getAll().forEach(Smer2017::create));
+        Ebean.execute(() -> rs.lukaj.upisstats.scraper.obrada2017.SmeroviBase.getAll().forEach(Smer2017::create));
         System.out.println("Loaded smerovi");
         Stream<UcenikW> svi = UceniciBase.svi();
         System.out.println("Loading ucenici...");
         Ebean.execute(() -> svi.forEach(Ucenik2017::create));
         System.out.println("Loaded ucenici. Populating averages.");
 
-        Ebean.execute(this::populateSchoolAverages);
+        setSkole(); //if time, fix bug; otherwise, this should work
+        populateSchoolAverages();
         System.out.println("Done");
         long end = System.currentTimeMillis();
         System.out.println("Time: " + ((end - start) / 1000) / 60.0 + "min");
