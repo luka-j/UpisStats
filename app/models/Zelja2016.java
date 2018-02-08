@@ -22,10 +22,13 @@ public class Zelja2016 extends Model {
     @ManyToOne
     public Ucenik2016 ucenik;
 
-    public static models.Zelja2016 create(Ucenik2016 uc, String sifraSmera) {
+    public short redniBroj;
+
+    public static models.Zelja2016 create(Ucenik2016 uc, String sifraSmera, short redniBroj) {
         models.Zelja2016 z = new models.Zelja2016();
         z.smer = Smer2016.finder.where().eq("sifra", sifraSmera).findUnique();
         z.ucenik = uc;
+        z.redniBroj = redniBroj;
         z.save();
         return z;
     }

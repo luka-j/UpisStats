@@ -6,6 +6,7 @@ import com.google.inject.Inject;
 import models.*;
 import play.mvc.Controller;
 import play.mvc.Result;
+import rs.lukaj.upisstats.scraper.download.DownloadController;
 import rs.lukaj.upisstats.scraper.obrada.SmeroviBase;
 import rs.lukaj.upisstats.scraper.obrada.UceniciGroup;
 import rs.lukaj.upisstats.scraper.obrada.UceniciGroupBuilder;
@@ -13,6 +14,7 @@ import rs.lukaj.upisstats.scraper.obrada2017.OsnovneBase;
 import rs.lukaj.upisstats.scraper.obrada2017.UceniciBase;
 import rs.lukaj.upisstats.scraper.obrada2017.UcenikW;
 
+import java.io.File;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -38,8 +40,8 @@ public class Init extends Controller {
     private static final Model.Finder<Long, ? extends Ucenik> ucenikFinder = Ucenik2017.finder;
 
     public Result populateDb() {
-        long start = System.currentTimeMillis();
         if (!INIT_PHASE) return forbidden("Init phase over");
+        long start = System.currentTimeMillis();
         SmeroviBase.load();
         UceniciGroup all = new UceniciGroupBuilder(null).getGroup();
         System.out.println("Loaded everything; populating");
@@ -53,12 +55,12 @@ public class Init extends Controller {
     }
 
     public Result populateDb2017() {
-        long start = System.currentTimeMillis();
         if(!INIT_PHASE) return forbidden("Init phase over");
+        long start = System.currentTimeMillis();
         System.out.println("Starting population");
         UceniciBase.load();
         System.out.println("Loaded data");
-        Ebean.execute(() -> rs.lukaj.upisstats.scraper.obrada2017.OsnovneBase.getAll().forEach(OsnovnaSkola2017::create));
+        Ebean.execute(() -> OsnovneBase.getAll().forEach(OsnovnaSkola2017::create));
         System.out.println("Loaded osnovne");
         Ebean.execute(() -> rs.lukaj.upisstats.scraper.obrada2017.SmeroviBase.getAll().forEach(Smer2017::create));
         System.out.println("Loaded smerovi");
@@ -110,6 +112,7 @@ public class Init extends Controller {
         return ok();
     }
 
+    //this may look lengthy, but it's mostly exception-handling boilerplate; it's actually quite short considering what it does
     private void populateAveragesInner(Object skola, String columnName, long id) {
         List<? extends Ucenik> group = ucenikFinder.where().eq(columnName, id).findList();
         if(group.isEmpty()) return;
@@ -117,7 +120,8 @@ public class Init extends Controller {
         for (Method m : skola.getClass().getMethods()) {
             if (m.getName().startsWith("set") && m.getParameterTypes()[0].equals(double.class)) {
                 try {
-                    m.invoke(skola, 1.0); //invoking setter in order to force populating fields from db
+                    m.invoke(skola, 1.0); //invoking setter in order to force populating fields from db,
+                                                 // because ebean lazy-loads the entities
                 } catch (IllegalAccessException | InvocationTargetException e) {
                     e.printStackTrace();
                 }
@@ -170,6 +174,26 @@ public class Init extends Controller {
         return ok("Done");
     }
 
+
+    public Result populateZelje() {
+        if (!INIT_PHASE) return forbidden("Init phase over");
+
+        System.out.println("Starting populateZelje...");
+        DownloadController.DATA_FOLDER = new File("/data/Shared/mined/UpisData/16");
+        SmeroviBase.load();
+        UceniciGroup all = new UceniciGroupBuilder(null).getGroup(); //todo add methods in scraper to clear
+        System.out.println("Loaded 2016, populating...");
+        Ebean.execute(() -> all.forEach(Ucenik2016::populateZelje));
+        System.out.println("Populated 2016");
+
+        DownloadController.DATA_FOLDER = new File("/data/Shared/mined/UpisData/17");
+        UceniciBase.load();
+        System.out.println("Loaded 2017, populating...");
+        Ebean.execute(() -> UceniciBase.svi().forEach(Ucenik2017::populateZelje));
+
+        System.out.println("Done");
+        return ok("Done");
+    }
 
     public Result fillInNeupisani() {
         if (!INIT_PHASE) return forbidden("Init phase over");

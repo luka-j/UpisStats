@@ -7,7 +7,6 @@ import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * Created by luka on 26.6.16..
@@ -33,7 +32,8 @@ public class Ucenik2016 extends Ucenik {
             System.err.println("Non-existant uc" + from.id);
             return;
         }
-        uc.listaZelja.addAll(from.listaZelja.stream().map(z -> Zelja2016.create(uc, z.sifra)).collect(Collectors.toList()));
+        for(short i=0; i<from.listaZelja.size(); i++)
+            uc.listaZelja.add(Zelja2016.create(uc, from.listaZelja.get(i).sifra, i));
         uc.update();
     }
 

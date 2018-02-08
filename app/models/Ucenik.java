@@ -3,7 +3,9 @@ package models;
 import com.avaje.ebean.Model;
 import controllers.CharUtils;
 import controllers.Index;
+import controllers.Utils;
 import rs.lukaj.upisstats.scraper.obrada.UcenikWrapper;
+import rs.lukaj.upisstats.scraper.obrada2017.UcenikW;
 
 import javax.persistence.Column;
 import javax.persistence.Id;
@@ -74,24 +76,91 @@ public class Ucenik extends Model {
         return uc;
     }
 
+    protected static Ucenik create(Ucenik uc, UcenikW from) {
+        uc.sifra = from.sifra;
+        uc.prosekSesti = from.sestiRaz.prosekOcena;
+        uc.prosekSedmi = from.sedmiRaz.prosekOcena;
+        uc.prosekOsmi = from.osmiRaz.prosekOcena;
+        uc.prosekUkupno = from.prosekUkupno;
+        uc.matematika = from.matematika;
+        uc.srpski = from.srpski;
+        uc.kombinovani = from.kombinovani;
+        uc.bodoviIzSkole = from.bodoviOcene;
+        uc.bodoviSaZavrsnog = from.bodovaZavrsni;
+        uc.bodoviUkupno = from.ukupnoBodova;
+        //uc.bodoviSaPrijemnog = from.bodovaPrijemni; this is impossible (or rather quite hard to do reliably). sorry
+        uc.bodoviSaTakmicenja = from.bodovaTakmicenja;
+        uc.drugiStraniJezik = from.drugiStrani;
+        if(from.krug == 1) uc.brojZelja = from.listaZelja1.size();
+        else if(from.krug == 2) uc.brojZelja = from.listaZelja2.size();
+        else uc.brojZelja = 0;
+        uc.upisanaZelja = from.upisanaZelja;
+        uc.krug = from.krug;
+
+        try {
+            populateGrades2017(from.sestiRaz.ocene, uc, 6);
+            populateGrades2017(from.sedmiRaz.ocene, uc, 7);
+            populateGrades2017(from.osmiRaz.ocene, uc, 8);
+            Ucenik.populateAverages(uc);
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            System.err.println("Exception while populating: invalid field(s) for uc" + uc.sifra + ": " + e.getMessage());
+            Index.errors(uc.sifra);
+            return null;
+        }
+
+        return uc;
+    }
+
+
+    private static void populateGrades2017(Map<String, Integer> from, Ucenik to, int raz) throws NoSuchFieldException, IllegalAccessException {
+        Class<?> c = to.getClass();
+        for (Map.Entry<String, Integer> e : from.entrySet()) {
+            switch (e.getKey()) {
+                case "izbornisport":
+                case "izborniSport":
+                    c.getField("sport" + raz).setInt(to, e.getValue());
+                    break;
+                case "prviStrani":
+                    c.getField("engleski" + raz).setInt(to, e.getValue());
+                    break;
+                case "maternjiJezik":
+                    c.getField("srpski" + raz).setInt(to, e.getValue());
+                    break;
+                case "drugiMaternjiJezik":
+                    c.getField("drugiMaternji" + raz).setInt(to, e.getValue());
+                    break;
+                default:
+                    if (e.getKey().isEmpty()) {
+                        System.err.println("Empty grade @ uc" + to.sifra);
+                        Index.errors(to.sifra);
+                    } else {
+                        c.getField(e.getKey() + raz).setInt(to, e.getValue());
+                    }
+                    break;
+            }
+        }
+    }
+
 
     public static void populateAverages(Ucenik of) throws NoSuchFieldException, IllegalAccessException {
         for (Field f : Ucenik.class.getDeclaredFields()) {
             if (f.getName().endsWith("P")) {
                 String subject = f.getName().substring(0, f.getName().length() - 1);
-                double avg = Ucenik.class.getField(subject + "7").getInt(of) + Ucenik.class.getField(subject + "8").getInt(of);
-                if (!subject.equals("hemija")) {
-                    avg += Ucenik.class.getField(subject + "6").getInt(of);
-                    avg /= 3;
-                } else
-                    avg /= 2;
+                int r6=0, r7, r8;
+                r7 = Ucenik.class.getField(subject + "7").getInt(of);
+                r8 = Ucenik.class.getField(subject + "8").getInt(of);
+                if (!subject.equals("hemija"))
+                    r6 = Ucenik.class.getField(subject + "6").getInt(of);
+
+                int nonzero = 3 - Utils.count(0, r6, r7, r8);
+                double avg = (double)(r6+r7+r8)/nonzero;
                 f.setDouble(of, avg);
             }
         }
     }
 
     private static void populateGrades(Map<String, Integer> from, Ucenik to, int raz) throws NoSuchFieldException, IllegalAccessException {
-        Class<Ucenik> c = Ucenik.class;
+        Class<?> c = to.getClass();
         for (Map.Entry<String, Integer> e : from.entrySet()) {
             switch (e.getKey()) {
                 case "Likovno vaspitanje":

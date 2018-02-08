@@ -54,4 +54,12 @@ public class Utils {
         }
         return false;
     }
+
+    public static int count(int needle, int... haystack) {
+        int c = 0;
+        for(int a : haystack)
+            if(a==needle)
+                c++;
+        return c;
+    }
 }
