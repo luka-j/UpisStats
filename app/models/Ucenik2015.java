@@ -36,6 +36,19 @@ public class Ucenik2015 extends Ucenik {
         uc.update();
     }
 
+    //ne postoje bodoviSaTakmicenja u Smerovi i OsnovnaSkola
+    //takodje, 2016. se takmicenja nisu racunala, a 2017 imam uradjenu kako treba
+    //tako da bi ovaj quick&dirty fix trebalo da prodje okej (i brzo)
+    public static void fixTakmicenja(UcenikWrapper from) {
+        Ucenik2015 uc = finder.where().eq("sifra", from.id).findUnique();
+        if (uc == null) {
+            System.err.println("Non-existant uc" + from.id);
+            return;
+        }
+        uc.bodoviSaTakmicenja = from.bodoviSaTakmicenja;
+        uc.update();
+    }
+
     public static Ucenik2015 create(UcenikWrapper from) {
         Ucenik2015 uc = new Ucenik2015();
         Ucenik.create(uc, from);

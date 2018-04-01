@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class Init extends Controller {
-    public static final boolean INIT_PHASE = true;
+    public static final boolean INIT_PHASE = false;
 
 
     @Inject
@@ -201,5 +201,12 @@ public class Init extends Controller {
         System.out.println("Filling in missing data...");
         Ebean.execute(() -> OsnovnaSkola2016.finder.findEach(OsnovnaSkola2016::fillInNeupisani));
         return ok("Hopefully this worked");
+    }
+
+    public Result fixTakmicenja2015() {
+        if (!INIT_PHASE) return forbidden("Init phase over");
+        DownloadController.DATA_FOLDER = DownloadController.generateDataFolder("15");
+        Ebean.execute(() -> UceniciGroup.svi().forEach(Ucenik2015::fixTakmicenja));
+        return ok("This should work");
     }
 }

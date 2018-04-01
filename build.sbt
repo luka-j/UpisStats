@@ -12,5 +12,5 @@ libraryDependencies ++= Seq(
   "org.postgresql" % "postgresql" % "42.1.4",
   "com.google.code.gson" % "gson" % "2.8.1",
   "org.jsoup" % "jsoup" % "1.9.1",
-  "com.github.luq-0" % "UpisScrapper" % "-SNAPSHOT"
+  "com.github.luq-0" % "UpisScrapper" % "1.1.1.1"
 )

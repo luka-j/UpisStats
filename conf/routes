@@ -8,6 +8,7 @@ GET        /populate                 controllers.Init.populateDb
 GET        /populate/current         controllers.Init.populateDb2017()
 GET        /populate/skole           controllers.Init.setSkole
 GET        /populate/zelje           controllers.Init.populateZelje
+GET        /populate/takmicenja15    controllers.Init.fixTakmicenja2015
 GET        /avgs                     controllers.Init.populateSchoolAverages
 GET        /neupisani                controllers.Init.fillInNeupisani
 GET        /get                      controllers.Index.getData(q: String)
