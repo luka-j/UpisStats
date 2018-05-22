@@ -1,6 +1,6 @@
 package models;
 
-import com.avaje.ebean.Model;
+import io.ebean.Ebean;
 import rs.lukaj.upisstats.scraper.obrada.UcenikWrapper;
 
 import javax.persistence.*;
@@ -15,7 +15,6 @@ import java.util.Map;
 @Table(name = "ucenici2015")
 public class Ucenik2015 extends Ucenik {
 
-    public static Finder<Long, Ucenik2015> finder = new Model.Finder<>(Ucenik2015.class);
     @ManyToOne(cascade = CascadeType.ALL)
     public models.OsnovnaSkola2015 osnovna;
     @ManyToOne(cascade = CascadeType.ALL)
@@ -26,7 +25,7 @@ public class Ucenik2015 extends Ucenik {
     public List<Takmicenje2015> takmicenja = new ArrayList<>();
 
     public static void populateZelje(UcenikWrapper from) {
-        Ucenik2015 uc = finder.where().eq("sifra", from.id).findUnique();
+        Ucenik2015 uc = Ebean.find(Ucenik2015.class).where().eq("sifra", from.id).findOne();
         if (uc == null) {
             System.err.println("Non-existant uc" + from.id);
             return;
@@ -40,7 +39,7 @@ public class Ucenik2015 extends Ucenik {
     //takodje, 2016. se takmicenja nisu racunala, a 2017 imam uradjenu kako treba
     //tako da bi ovaj quick&dirty fix trebalo da prodje okej (i brzo)
     public static void fixTakmicenja(UcenikWrapper from) {
-        Ucenik2015 uc = finder.where().eq("sifra", from.id).findUnique();
+        Ucenik2015 uc = Ebean.find(Ucenik2015.class).where().eq("sifra", from.id).findOne();
         if (uc == null) {
             System.err.println("Non-existant uc" + from.id);
             return;

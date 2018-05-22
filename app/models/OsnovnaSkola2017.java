@@ -1,7 +1,7 @@
 package models;
 
-import com.avaje.ebean.Model;
 import controllers.CharUtils;
+import io.ebean.Ebean;
 import rs.lukaj.upisstats.scraper.obrada2017.OsnovnaW;
 
 import javax.persistence.Entity;
@@ -10,8 +10,6 @@ import javax.persistence.Table;
 @Entity
 @Table(name="os2017")
 public class OsnovnaSkola2017 extends OsnovnaSkola {
-    public static Finder<Long, OsnovnaSkola2017> finder = new Model.Finder<>(OsnovnaSkola2017.class);
-
     public String opstina;
     public int ukupnoUcenika, svrsenihUcenika, nesvrsenihUcenika, vukovaca, nagradjenih;
     public double sviBodova6, sviBodova7, sviBodova8, sviProsek6, sviProsek7, sviProsek8;
@@ -20,7 +18,7 @@ public class OsnovnaSkola2017 extends OsnovnaSkola {
     public double drugiMaternji6, drugiMaternji7, drugiMaternji8, drugiMaternjiP;
 
     public static OsnovnaSkola2017 create(OsnovnaW skola) {
-        OsnovnaSkola2017 os = finder.byId((long)skola.id);
+        OsnovnaSkola2017 os = Ebean.find(OsnovnaSkola2017.class, (long)skola.id);
         if (os == null) {
             os = new OsnovnaSkola2017();
             os.id = skola.id;

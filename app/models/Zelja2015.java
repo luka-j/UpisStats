@@ -1,6 +1,7 @@
 package models;
 
-import com.avaje.ebean.Model;
+import io.ebean.Ebean;
+import io.ebean.Model;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -26,7 +27,7 @@ public class Zelja2015 extends Model {
 
     public static models.Zelja2015 create(Ucenik2015 uc, String sifraSmera, short redniBroj) {
         models.Zelja2015 z = new models.Zelja2015();
-        z.smer = Smer2015.finder.where().eq("sifra", sifraSmera).findUnique();
+        z.smer = Ebean.find(Smer2015.class).where().eq("sifra", sifraSmera).findOne();
         z.ucenik = uc;
         z.redniBroj = redniBroj;
         z.save();

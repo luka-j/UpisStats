@@ -1,8 +1,7 @@
 package controllers;
 
-import com.avaje.ebean.Ebean;
-import com.avaje.ebean.Model;
 import com.google.inject.Inject;
+import io.ebean.Ebean;
 import models.*;
 import play.mvc.Controller;
 import play.mvc.Result;
@@ -20,7 +19,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.SQLException;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
@@ -34,10 +32,10 @@ public class Init extends Controller {
     private play.db.Database db;
 
     private static final Class<? extends Ucenik> currentUcenik = Ucenik2017.class;
+    private static final Class<? extends Smer> currentSmer = Smer2017.class;
+    private static final Class<? extends OsnovnaSkola> currentOsnovna = OsnovnaSkola2017.class;
+
     private static final Field[] ucenikFields = currentUcenik.getFields();
-    private static final Model.Finder<Long, ? extends Smer> smerFinder = Smer2017.finder;
-    private static final Model.Finder<Long, ? extends OsnovnaSkola> osnovnaFinder = OsnovnaSkola2017.finder;
-    private static final Model.Finder<Long, ? extends Ucenik> ucenikFinder = Ucenik2017.finder;
 
     public Result populateDb() {
         if (!INIT_PHASE) return forbidden("Init phase over");
@@ -95,17 +93,17 @@ public class Init extends Controller {
             }
             conn.commit();
             System.out.println("Done");
-        } catch (SQLException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             try {
                 conn.rollback();
-            } catch (SQLException e1) {
+            } catch (Exception e1) {
                 e1.printStackTrace();
             }
         } finally {
             try {
                 conn.close();
-            } catch (SQLException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
@@ -114,7 +112,7 @@ public class Init extends Controller {
 
     //this may look lengthy, but it's mostly exception-handling boilerplate; it's actually quite short considering what it does
     private void populateAveragesInner(Object skola, String columnName, long id) {
-        List<? extends Ucenik> group = ucenikFinder.where().eq(columnName, id).findList();
+        List<? extends Ucenik> group = Ebean.find(currentUcenik).where().eq(columnName, id).findList();
         if(group.isEmpty()) return;
 
         for (Method m : skola.getClass().getMethods()) {
@@ -162,11 +160,11 @@ public class Init extends Controller {
     public Result populateSchoolAverages() {
         if (!INIT_PHASE) return forbidden("Init phase over");
         Ebean.execute(() -> {
-            smerFinder.findEach(s -> {
+            Ebean.find(currentSmer).findEach(s -> {
                 populateAveragesInner(s, "upisana_id", s.id);
                 s.save();
             });
-            osnovnaFinder.findEach(s -> {
+            Ebean.find(currentOsnovna).findEach(s -> {
                 populateAveragesInner(s, "osnovna_id", s.id);
                 s.save();
             });
@@ -199,7 +197,7 @@ public class Init extends Controller {
         if (!INIT_PHASE) return forbidden("Init phase over");
         OsnovneBase.load();
         System.out.println("Filling in missing data...");
-        Ebean.execute(() -> OsnovnaSkola2016.finder.findEach(OsnovnaSkola2016::fillInNeupisani));
+        Ebean.execute(() -> Ebean.find(OsnovnaSkola2016.class).findEach(OsnovnaSkola2016::fillInNeupisani));
         return ok("Hopefully this worked");
     }
 

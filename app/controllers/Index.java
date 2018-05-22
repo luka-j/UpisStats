@@ -4,10 +4,10 @@ import akka.stream.ConnectionException;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.inject.Inject;
+import io.ebean.Ebean;
 import models.CountMatrix;
 import models.Ucenik;
 import models.Ucenik2017;
-import org.intellij.lang.annotations.MagicConstant;
 import play.http.HttpEntity;
 import play.libs.Json;
 import play.mvc.Controller;
@@ -67,10 +67,9 @@ public class Index extends Controller {
         static final int PARTIAL_FAIL=1;
         static final int TOTAL_FAIL=2;
         public final ArrayNode result;
-        public final @MagicConstant int status;
+        public final int status;
 
-        private ParseResult(ArrayNode result,
-                            @MagicConstant(intValues = {SUCCESS, PARTIAL_FAIL, TOTAL_FAIL}) int status) {
+        private ParseResult(ArrayNode result, int status) {
             this.result = result;
             this.status = status;
         }
@@ -97,7 +96,7 @@ public class Index extends Controller {
                     if (ac.isOk()) {
                         jsonAction.put("type", ac.getAction());
                         if (ac.getAction() == Parser.Action.DUMP) {
-                            Ucenik uc = Ucenik2017.finder.where().eq("sifra", Integer.parseInt(ac.getQuery())).findUnique(); //todo year-agnostic
+                            Ucenik uc = Ebean.find(Ucenik2017.class).where().eq("sifra", Integer.parseInt(ac.getQuery())).findOne(); //todo year-agnostic
                             jsonAction.put("data", String.valueOf(uc));
                         } else {
                             PreparedStatement st = conn.prepareStatement(ac.getQuery());

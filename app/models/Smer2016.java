@@ -1,7 +1,7 @@
 package models;
 
-import com.avaje.ebean.Model;
 import controllers.CharUtils;
+import io.ebean.Ebean;
 
 import javax.persistence.Entity;
 import javax.persistence.Table;
@@ -13,11 +13,9 @@ import javax.persistence.Table;
 @Table(name = "smerovi2016")
 public class Smer2016 extends Smer {
 
-    public static Finder<Long, Smer2016> finder = new Model.Finder<>(Smer2016.class);
-
     public static Smer2016 create(String sifra, String ime, String mesto, String okrug, String smer, String podrucje, int kvota) {
         sifra = CharUtils.stripAll(sifra);
-        Smer2016 res = finder.where().eq("sifra", sifra).findUnique();
+        Smer2016 res = Ebean.find(Smer2016.class).where().eq("sifra", sifra).findOne();
         if (res == null) {
             Smer2016 s = new Smer2016();
             Smer.create(s, sifra, ime, mesto, okrug, smer, podrucje, kvota);

@@ -4,13 +4,12 @@ version := "1.0-BETA"
 
 lazy val root = project.in(file(".")).enablePlugins(PlayJava, PlayEbean)
 
-scalaVersion := "2.11.7"
+scalaVersion := "2.11.12"
 
 resolvers += "jitpack" at "https://jitpack.io"
 libraryDependencies ++= Seq(
-  javaJdbc, cache, javaWs,
+  javaJdbc, ehcache, javaWs, guice,
   "org.postgresql" % "postgresql" % "42.1.4",
-  "com.google.code.gson" % "gson" % "2.8.1",
-  "org.jsoup" % "jsoup" % "1.9.1",
-  "com.github.luq-0" % "UpisScrapper" % "1.1.1.1"
+  "com.github.luq-0" % "UpisScrapper" % "1.2.0",
+  "com.typesafe.play" %% "play-json" % "2.6.0"
 )

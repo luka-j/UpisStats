@@ -1,7 +1,7 @@
 package models;
 
-import com.avaje.ebean.Model;
 import controllers.CharUtils;
+import io.ebean.Model;
 
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;

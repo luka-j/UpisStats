@@ -1,6 +1,5 @@
 package models;
 
-import org.jetbrains.annotations.Contract;
 import rs.lukaj.upisstats.scraper.obrada2017.UcenikW;
 
 import javax.persistence.Entity;
@@ -13,7 +12,6 @@ public class Takmicenje2017 extends Takmicenje {
     @OneToOne
     public Ucenik2017 ucenik;
 
-    @Contract("_, null -> null")
     public static Takmicenje2017 create(Ucenik2017 uc, UcenikW.Takmicenje takmicenje) {
         if(takmicenje == null) return null;
         Takmicenje2017 tak = new Takmicenje2017();

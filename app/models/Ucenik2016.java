@@ -1,6 +1,6 @@
 package models;
 
-import com.avaje.ebean.Model;
+import io.ebean.Ebean;
 import rs.lukaj.upisstats.scraper.obrada.UcenikWrapper;
 
 import javax.persistence.*;
@@ -15,8 +15,6 @@ import java.util.Map;
 @Table(name = "ucenici2016")
 public class Ucenik2016 extends Ucenik {
 
-    public static Finder<Long, Ucenik2016> finder = new Model.Finder<>(Ucenik2016.class);
-
     @ManyToOne(cascade = CascadeType.ALL)
     public models.OsnovnaSkola2016 osnovna;
     @ManyToOne(cascade = CascadeType.ALL)
@@ -27,7 +25,7 @@ public class Ucenik2016 extends Ucenik {
     public List<Takmicenje2016> takmicenja = new ArrayList<>();
 
     public static void populateZelje(UcenikWrapper from) {
-        Ucenik2016 uc = finder.where().eq("sifra", from.id).findUnique();
+        Ucenik2016 uc = Ebean.find(Ucenik2016.class).where().eq("sifra", from.id).findOne();
         if (uc == null) {
             System.err.println("Non-existant uc" + from.id);
             return;

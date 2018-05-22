@@ -1,7 +1,7 @@
 package models;
 
-import com.avaje.ebean.Model;
 import controllers.CharUtils;
+import io.ebean.Ebean;
 import rs.lukaj.upisstats.scraper.obrada2017.SmerW;
 
 import javax.persistence.Column;
@@ -12,7 +12,6 @@ import javax.persistence.Table;
 @Table(name="smerovi2017")
 public class Smer2017 extends Smer {
 
-    public static Finder<Long, Smer2017> finder = new Model.Finder<>(Smer2017.class);
     public String jezik;
     public int trajanje, kvotaUmanjenje;
     @Column(name = "upisano_1k")
@@ -55,7 +54,7 @@ public class Smer2017 extends Smer {
     }
 
     public static Smer2017 find(String sifra) {
-        return finder.where().eq("sifra", CharUtils.stripAll(sifra)).findUnique();
+        return Ebean.find(Smer2017.class).where().eq("sifra", CharUtils.stripAll(sifra)).findOne();
     }
 
     public void addUcenik() {

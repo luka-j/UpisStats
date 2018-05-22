@@ -1,7 +1,7 @@
 package models;
 
-import com.avaje.ebean.Model;
 import controllers.CharUtils;
+import io.ebean.Ebean;
 import rs.lukaj.upisstats.scraper.obrada2017.UcenikW;
 
 import javax.persistence.*;
@@ -13,7 +13,6 @@ import java.util.stream.Collectors;
 @Table(name = "ucenici2017")
 public class Ucenik2017 extends Ucenik {
 
-    public static Finder<Long, Ucenik2017> finder = new Model.Finder<>(Ucenik2017.class);
 
     @ManyToOne(cascade = CascadeType.ALL)
     public OsnovnaSkola2017 osnovna;
@@ -37,7 +36,7 @@ public class Ucenik2017 extends Ucenik {
     public boolean vukovaDiploma, prioritet;
 
     public static void populateZelje(UcenikW from) {
-        Ucenik2017 uc = finder.where().eq("sifra", from.sifra).findUnique();
+        Ucenik2017 uc = Ebean.find(Ucenik2017.class).where().eq("sifra", from.sifra).findOne();
         if(uc == null) {
             System.err.println("Non-existant sifra " + from.sifra);
             return;
@@ -68,7 +67,7 @@ public class Ucenik2017 extends Ucenik {
 
         uc.save(); //fun fact: this assigns null to lists
 
-        uc.osnovna = OsnovnaSkola2017.finder.byId((long) from.osnovna.id);
+        uc.osnovna = Ebean.find(OsnovnaSkola2017.class, (long) from.osnovna.id);
         uc.upisana = Smer2017.find(CharUtils.stripAll(from.smer.sifra));
         uc.osnovna.addUcenik();
         uc.upisana.addUcenik();

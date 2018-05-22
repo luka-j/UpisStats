@@ -1,9 +1,9 @@
 package models;
 
-import com.avaje.ebean.Model;
 import controllers.CharUtils;
 import controllers.Index;
 import controllers.Utils;
+import io.ebean.Model;
 import rs.lukaj.upisstats.scraper.obrada.UcenikWrapper;
 import rs.lukaj.upisstats.scraper.obrada2017.UcenikW;
 

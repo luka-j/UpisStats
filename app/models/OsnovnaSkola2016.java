@@ -1,10 +1,9 @@
 package models;
 
-import com.avaje.ebean.Model;
 import controllers.CharUtils;
+import io.ebean.Ebean;
 import models.utils.Osnovna;
 import models.utils.OsnovneBase;
-import org.jetbrains.annotations.NotNull;
 
 import javax.persistence.Entity;
 import javax.persistence.Table;
@@ -24,13 +23,11 @@ public class OsnovnaSkola2016 extends OsnovnaSkola {
     public double srpskiPReal, matematikaPReal;
     public double procenatUpisanih;
 
-    public static Model.Finder<Long, OsnovnaSkola2016> finder = new Model.Finder<>(OsnovnaSkola2016.class);
-
     public static OsnovnaSkola2016 create(String ime, String mesto, String okrug) {
         ime = CharUtils.stripAll(ime);
         mesto = CharUtils.stripAll(mesto);
         okrug = CharUtils.stripAll(okrug);
-        OsnovnaSkola2016 res = finder.where().eq("ime", ime).eq("mesto", mesto).eq("okrug", okrug).findUnique();
+        OsnovnaSkola2016 res = Ebean.find(OsnovnaSkola2016.class).where().eq("ime", ime).eq("mesto", mesto).eq("okrug", okrug).findOne();
         if (res == null) {
             OsnovnaSkola2016 os = new OsnovnaSkola2016();
             OsnovnaSkola.create(os, ime, mesto, okrug);
@@ -88,7 +85,7 @@ public class OsnovnaSkola2016 extends OsnovnaSkola {
         double a, b;
 
         @Override
-        public int compareTo(@NotNull Pair o) {
+        public int compareTo(Pair o) {
             return Double.compare(b, o.b);
         }
     }
