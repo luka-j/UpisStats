@@ -30,7 +30,7 @@ public class Smer extends Model {
     public double matematika, srpski, kombinovani;
     public double bodoviIzSkole, bodoviSaZavrsnog, bodoviUkupno, bodoviSaPrijemnog;
 
-    protected static Smer create(Smer s, String sifra, String imeSkole, String mesto, String okrug, String smer, String podrucje, int kvota) {
+    protected static Smer fillIn(Smer s, String sifra, String imeSkole, String mesto, String okrug, String smer, String podrucje, int kvota) {
         s.sifra = sifra;
         s.brojUcenika = 1;
         s.ime = CharUtils.stripAll(imeSkole);

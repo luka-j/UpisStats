@@ -35,7 +35,7 @@ public class Ucenik extends Model {
     public double bodoviIzSkole, bodoviSaZavrsnog, bodoviUkupno, bodoviSaPrijemnog, bodoviSaTakmicenja;
     public int brojZelja, upisanaZelja, krug;
 
-    protected static Ucenik create(Ucenik uc, UcenikWrapper from) {
+    protected static Ucenik fillIn(Ucenik uc, UcenikWrapper from) {
         uc.sifra = from.id;
         uc.prosekSesti = from.prosekSesti;
         uc.prosekSedmi = from.prosekSedmi;
@@ -76,7 +76,7 @@ public class Ucenik extends Model {
         return uc;
     }
 
-    protected static Ucenik create(Ucenik uc, UcenikW from) {
+    protected static Ucenik fillIn(Ucenik uc, UcenikW from) {
         uc.sifra = from.sifra;
         uc.prosekSesti = from.sestiRaz.prosekOcena;
         uc.prosekSedmi = from.sedmiRaz.prosekOcena;

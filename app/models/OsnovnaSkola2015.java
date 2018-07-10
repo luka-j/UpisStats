@@ -21,7 +21,7 @@ public class OsnovnaSkola2015 extends OsnovnaSkola {
         List<OsnovnaSkola2015> res = Ebean.find(OsnovnaSkola2015.class).where().eq("ime", ime).eq("mesto", mesto).eq("okrug", okrug).findList();
         if (res.size() == 0) {
             OsnovnaSkola2015 os = new OsnovnaSkola2015();
-            OsnovnaSkola.create(os, ime, mesto, okrug);
+            OsnovnaSkola.fillIn(os, ime, mesto, okrug);
             return os;
         }
         OsnovnaSkola2015 os = res.get(0);

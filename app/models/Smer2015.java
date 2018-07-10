@@ -20,7 +20,7 @@ public class Smer2015 extends Smer {
         List<Smer2015> res = Ebean.find(Smer2015.class).where().eq("sifra", sifra).findList();
         if (res.size() == 0) {
             Smer2015 s = new Smer2015();
-            Smer.create(s, sifra, ime, mesto, okrug, smer, podrucje, kvota);
+            Smer.fillIn(s, sifra, ime, mesto, okrug, smer, podrucje, kvota);
             return s;
         }
         Smer2015 s = res.get(0);

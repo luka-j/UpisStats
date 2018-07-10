@@ -31,7 +31,7 @@ public class OsnovnaSkola extends Model {
     public double matematika, srpski, kombinovani;
     public double bodoviIzSkole, bodoviSaZavrsnog, bodoviUkupno, bodoviSaPrijemnog;
 
-    protected static OsnovnaSkola create(OsnovnaSkola os, String ime, String mesto, String okrug) {
+    protected static OsnovnaSkola fillIn(OsnovnaSkola os, String ime, String mesto, String okrug) {
         os.ime = ime;
         os.mesto = mesto;
         os.okrug = okrug;

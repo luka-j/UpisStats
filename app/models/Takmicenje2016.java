@@ -17,7 +17,7 @@ public class Takmicenje2016 extends Takmicenje {
     public static Takmicenje2016 create(Ucenik2016 uc, String predmet, int bodovi, int mesto, int rang) {
         Takmicenje2016 tak = new Takmicenje2016();
         tak.ucenik = uc;
-        Takmicenje.create(tak, predmet, bodovi, mesto, rang);
+        Takmicenje.fillIn(tak, predmet, bodovi, mesto, rang);
         return tak;
     }
 }

@@ -30,7 +30,7 @@ public class OsnovnaSkola2016 extends OsnovnaSkola {
         OsnovnaSkola2016 res = Ebean.find(OsnovnaSkola2016.class).where().eq("ime", ime).eq("mesto", mesto).eq("okrug", okrug).findOne();
         if (res == null) {
             OsnovnaSkola2016 os = new OsnovnaSkola2016();
-            OsnovnaSkola.create(os, ime, mesto, okrug);
+            OsnovnaSkola.fillIn(os, ime, mesto, okrug);
             return os;
         }
         res.brojUcenika++;

@@ -8,20 +8,20 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 
 @Entity
-@Table(name="smerovi2017")
-public class Smer2017 extends SmerExt {
+@Table(name="smerovi2018")
+public class Smer2018 extends SmerExt {
 
-    public static Smer2017 create(SmerW smer) {
+    public static Smer2018 create(SmerW smer) {
         String sifra = CharUtils.stripAll(smer.sifra);
-        Smer2017 s = find(sifra);
+        Smer2018 s = find(sifra);
         if (s == null) {
-            s = new Smer2017();
+            s = new Smer2018();
             SmerExt.fillIn(s, smer);
         }
         return s;
     }
 
-    public static Smer2017 find(String sifra) {
-        return Ebean.find(Smer2017.class).where().eq("sifra", CharUtils.stripAll(sifra)).findOne();
+    public static Smer2018 find(String sifra) {
+        return Ebean.find(Smer2018.class).where().eq("sifra", CharUtils.stripAll(sifra)).findOne();
     }
 }

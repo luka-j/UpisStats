@@ -68,7 +68,7 @@ public class CharUtils {
     }
 
     public static String stripAll(String str) {
-        return toLatin(stripGuillemets(str.replaceAll("[ '\"-.]", "").toLowerCase()));
+        return toLatin(stripGuillemets(str.replaceAll("[ '\"-.]", "").toLowerCase())); //todo add comma?
     }
 
     public static String latinize(String str) {

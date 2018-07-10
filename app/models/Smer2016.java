@@ -18,7 +18,7 @@ public class Smer2016 extends Smer {
         Smer2016 res = Ebean.find(Smer2016.class).where().eq("sifra", sifra).findOne();
         if (res == null) {
             Smer2016 s = new Smer2016();
-            Smer.create(s, sifra, ime, mesto, okrug, smer, podrucje, kvota);
+            Smer.fillIn(s, sifra, ime, mesto, okrug, smer, podrucje, kvota);
             return s;
         }
         res.brojUcenika++;

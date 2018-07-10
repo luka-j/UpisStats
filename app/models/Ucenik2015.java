@@ -50,7 +50,7 @@ public class Ucenik2015 extends Ucenik {
 
     public static Ucenik2015 create(UcenikWrapper from) {
         Ucenik2015 uc = new Ucenik2015();
-        Ucenik.create(uc, from);
+        Ucenik.fillIn(uc, from);
         UcenikWrapper.SrednjaSkola ss = from.upisanaSkola;
         uc.upisana = Smer2015.create(ss.sifra, ss.ime, ss.mesto, ss.okrug, ss.smer, ss.podrucje, ss.kvota);
         UcenikWrapper.OsnovnaSkola os = from.osInfo;

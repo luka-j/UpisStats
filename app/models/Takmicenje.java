@@ -19,7 +19,7 @@ public class Takmicenje extends Model {
     public String predmet;
     public int bodova, mesto, rang;
 
-    protected static Takmicenje create(Takmicenje tak, String predmet, int bodovi, int mesto, int rang) {
+    protected static Takmicenje fillIn(Takmicenje tak, String predmet, int bodovi, int mesto, int rang) {
         tak.predmet = CharUtils.stripAll(predmet);
         tak.bodova = bodovi;
         tak.mesto = mesto;
