@@ -2,6 +2,8 @@ package controllers;
 
 import com.google.inject.Inject;
 import io.ebean.Ebean;
+import io.ebean.EbeanServer;
+import io.ebean.Transaction;
 import models.*;
 import play.mvc.Controller;
 import play.mvc.Result;
@@ -13,10 +15,7 @@ import rs.lukaj.upisstats.scraper.obrada2017.OsnovneBase;
 import rs.lukaj.upisstats.scraper.obrada2017.UceniciBase;
 import rs.lukaj.upisstats.scraper.obrada2017.UcenikW;
 
-import java.io.File;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.util.List;
@@ -25,15 +24,15 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class Init extends Controller {
-    public static final boolean INIT_PHASE = false;
+    public static final boolean INIT_PHASE = true;
 
 
     @Inject
     private play.db.Database db;
 
-    private static final Class<? extends Ucenik> currentUcenik = Ucenik2017.class;
-    private static final Class<? extends Smer> currentSmer = Smer2017.class;
-    private static final Class<? extends OsnovnaSkola> currentOsnovna = OsnovnaSkola2017.class;
+    private static final Class<? extends Ucenik> currentUcenik = Ucenik2018.class;
+    private static final Class<? extends Smer> currentSmer = Smer2018.class;
+    private static final Class<? extends OsnovnaSkola> currentOsnovna = OsnovnaSkola2018.class;
 
     private static final Field[] ucenikFields = currentUcenik.getFields();
 
@@ -54,20 +53,27 @@ public class Init extends Controller {
 
     public Result populateDb2017() {
         if(!INIT_PHASE) return forbidden("Init phase over");
+        if(UceniciBase.get(100001) != null) {
+            System.out.println("Non-empty UceniciBase at the beginning! This shouldn't happen!");
+            try {
+                Thread.sleep(1000*60*3);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
         long start = System.currentTimeMillis();
         System.out.println("Starting population");
         UceniciBase.load();
         System.out.println("Loaded data");
-        Ebean.execute(() -> OsnovneBase.getAll().forEach(OsnovnaSkola2017::create));
+        Ebean.execute(() -> OsnovneBase.getAll().forEach(OsnovnaSkola2018::create));
         System.out.println("Loaded osnovne");
-        Ebean.execute(() -> rs.lukaj.upisstats.scraper.obrada2017.SmeroviBase.getAll().forEach(Smer2017::create));
+        Ebean.execute(() -> rs.lukaj.upisstats.scraper.obrada2017.SmeroviBase.getAll().forEach(Smer2018::create));
         System.out.println("Loaded smerovi");
         Stream<UcenikW> svi = UceniciBase.svi();
         System.out.println("Loading ucenici...");
-        Ebean.execute(() -> svi.forEach(Ucenik2017::create));
+        Ebean.execute(() -> svi.forEach(Ucenik2018::create));
         System.out.println("Loaded ucenici. Populating averages.");
 
-        setSkole(); //if time, fix bug; otherwise, this should work
         populateSchoolAverages();
         System.out.println("Done");
         long end = System.currentTimeMillis();
@@ -115,7 +121,7 @@ public class Init extends Controller {
         List<? extends Ucenik> group = Ebean.find(currentUcenik).where().eq(columnName, id).findList();
         if(group.isEmpty()) return;
 
-        for (Method m : skola.getClass().getMethods()) {
+        /*for (Method m : skola.getClass().getMethods()) {
             if (m.getName().startsWith("set") && m.getParameterTypes()[0].equals(double.class)) {
                 try {
                     m.invoke(skola, 1.0); //invoking setter in order to force populating fields from db,
@@ -124,7 +130,7 @@ public class Init extends Controller {
                     e.printStackTrace();
                 }
             }
-        }
+        }*/
         for (Field f : skola.getClass().getFields()) {
             if (f.getType().equals(double.class)
                     && Utils.containsNumericField(ucenikFields, f.getName())) {
@@ -159,16 +165,38 @@ public class Init extends Controller {
 
     public Result populateSchoolAverages() {
         if (!INIT_PHASE) return forbidden("Init phase over");
-        Ebean.execute(() -> {
+        System.out.println("Populating school averages");
+        EbeanServer server  = Ebean.getDefaultServer();
+        /*try {
+            Field config = server.getClass().getDeclaredField("serverConfig");
+            config.setAccessible(true);
+            ((ServerConfig)config.get(server)).setUpdateChangesOnly(false);
+        } catch (IllegalAccessException | NoSuchFieldException e) {
+            e.printStackTrace();
+            return internalServerError("Cannot access server config");
+        }*/
+        try {
+            Transaction t = server.beginTransaction();
+            t.setUpdateAllLoadedProperties(true);
+
             Ebean.find(currentSmer).findEach(s -> {
                 populateAveragesInner(s, "upisana_id", s.id);
-                s.save();
+                s.markAsDirty();
+                server.update(s, t);
             });
+            t.commitAndContinue();
+            System.out.println("Finished calculating smer averages");
+
             Ebean.find(currentOsnovna).findEach(s -> {
                 populateAveragesInner(s, "osnovna_id", s.id);
-                s.save();
+                server.update(s, t);
             });
-        });
+            t.commit();
+            System.out.println("Finished calculating osnovne averages");
+            t.close();
+        } finally {
+            server.endTransaction();
+        }
         return ok("Done");
     }
 
@@ -177,14 +205,15 @@ public class Init extends Controller {
         if (!INIT_PHASE) return forbidden("Init phase over");
 
         System.out.println("Starting populateZelje...");
-        DownloadController.DATA_FOLDER = new File("/data/Shared/mined/UpisData/16");
+        DownloadController.DATA_FOLDER = DownloadController.generateDataFolder("16");
         SmeroviBase.load();
         UceniciGroup all = new UceniciGroupBuilder(null).getGroup(); //todo add methods in scraper to clear
         System.out.println("Loaded 2016, populating...");
         Ebean.execute(() -> all.forEach(Ucenik2016::populateZelje));
         System.out.println("Populated 2016");
 
-        DownloadController.DATA_FOLDER = new File("/data/Shared/mined/UpisData/17");
+        DownloadController.DATA_FOLDER = DownloadController.generateDataFolder("17");
+        UceniciBase.clear();
         UceniciBase.load();
         System.out.println("Loaded 2017, populating...");
         Ebean.execute(() -> UceniciBase.svi().forEach(Ucenik2017::populateZelje));

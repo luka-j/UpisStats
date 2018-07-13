@@ -10,6 +10,6 @@ resolvers += "jitpack" at "https://jitpack.io"
 libraryDependencies ++= Seq(
   javaJdbc, ehcache, javaWs, guice,
   "org.postgresql" % "postgresql" % "42.1.4",
-  "com.github.luq-0" % "UpisScrapper" % "1.2.2.1",
-  "com.typesafe.play" %% "play-json" % "2.6.0"
+  "com.github.luq-0" % "UpisScrapper" % "1.2.3",
+  "com.typesafe.play" %% "play-json" % "2.6.7"
 )

@@ -4,7 +4,7 @@
 
 # Home page
 GET        /                         controllers.Index.hw
-GET        /populate                 controllers.Init.populateDb
+GET        /populate/old             controllers.Init.populateDb
 GET        /populate/current         controllers.Init.populateDb2017()
 GET        /populate/skole           controllers.Init.setSkole
 GET        /populate/zelje           controllers.Init.populateZelje

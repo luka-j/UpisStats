@@ -97,48 +97,20 @@ public class Ucenik extends Model {
         uc.upisanaZelja = from.upisanaZelja;
         uc.krug = from.krug;
 
-        try {
-            populateGrades2017(from.sestiRaz.ocene, uc, 6);
-            populateGrades2017(from.sedmiRaz.ocene, uc, 7);
-            populateGrades2017(from.osmiRaz.ocene, uc, 8);
-            Ucenik.populateAverages(uc);
-        } catch (NoSuchFieldException | IllegalAccessException e) {
-            System.err.println("Exception while populating: invalid field(s) for uc" + uc.sifra + ": " + e.getMessage());
-            Index.errors(uc.sifra);
-            return null;
+        if(!(uc instanceof UcenikExt)) {
+            try {
+                populateGrades(from.sestiRaz.ocene, uc, 6);
+                populateGrades(from.sedmiRaz.ocene, uc, 7);
+                populateGrades(from.osmiRaz.ocene, uc, 8);
+                Ucenik.populateAverages(uc);
+            } catch (NoSuchFieldException | IllegalAccessException e) {
+                System.err.println("Exception while populating: invalid field(s) for uc" + uc.sifra + ": " + e.getMessage());
+                Index.errors(uc.sifra);
+                return null;
+            }
         }
 
         return uc;
-    }
-
-
-    private static void populateGrades2017(Map<String, Integer> from, Ucenik to, int raz) throws NoSuchFieldException, IllegalAccessException {
-        Class<?> c = to.getClass();
-        for (Map.Entry<String, Integer> e : from.entrySet()) {
-            switch (e.getKey()) {
-                case "izbornisport":
-                case "izborniSport":
-                    c.getField("sport" + raz).setInt(to, e.getValue());
-                    break;
-                case "prviStrani":
-                    c.getField("engleski" + raz).setInt(to, e.getValue());
-                    break;
-                case "maternjiJezik":
-                    c.getField("srpski" + raz).setInt(to, e.getValue());
-                    break;
-                case "drugiMaternjiJezik":
-                    c.getField("drugiMaternji" + raz).setInt(to, e.getValue());
-                    break;
-                default:
-                    if (e.getKey().isEmpty()) {
-                        System.err.println("Empty grade @ uc" + to.sifra);
-                        Index.errors(to.sifra);
-                    } else {
-                        c.getField(e.getKey() + raz).setInt(to, e.getValue());
-                    }
-                    break;
-            }
-        }
     }
 
 

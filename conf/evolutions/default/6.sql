@@ -339,6 +339,8 @@ create table prijemni2018 (
 
 alter table prijemni2018 add constraint fk_prijemni2018_ucenik_id foreign key (ucenik_id) references ucenici2018 (id) on delete restrict on update restrict;
 create index ix_prijemni2018_ucenik_id on prijemni2018 (ucenik_id);
+
+
 # --- !Downs
 
 alter table if exists takmicenje2018 drop constraint if exists fk_takmicenje2018_ucenik_id;
